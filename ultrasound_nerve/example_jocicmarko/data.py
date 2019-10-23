@@ -70,7 +70,7 @@ def create_test_data(data_path=Path.home() / 'data/ultrasound_nerve/'):
         imgs[i, :, :] = np.array(img)
         imgs_id[i] = np.array(img_id)
 
-        if i % 100 == 0:
+        if i % 1000 == 0:
             print('Done: {0}/{1} images'.format(i, total))
         i += 1
     print('Loading done.')
