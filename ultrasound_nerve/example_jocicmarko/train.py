@@ -11,6 +11,11 @@ from pathlib import Path
 
 from data import load_train_data, load_test_data
 
+import logging
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # FATAL
+logging.getLogger('tensorflow').setLevel(logging.FATAL)
+
+
 K.set_image_data_format('channels_last')  # TF dimension ordering in this code
 
 img_rows = 96
@@ -162,4 +167,4 @@ def train_and_predict(epochs=1, predict=False, limit=64):
 
 
 if __name__ == '__main__':
-    train_and_predict(predict=True, limit=0)
+    train_and_predict(epochs=25, predict=True, limit=0)
