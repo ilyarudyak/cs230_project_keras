@@ -34,7 +34,7 @@ class UNet():
             'output_shape': (64, 64),
             'transform_train': True,
             'batch_size': 64,
-            'nb_epoch': 120
+            'nb_epoch': 1
         }
 
         self.checkpoint_name = checkpoint_name
@@ -65,7 +65,8 @@ class UNet():
 
     def compile(self):
 
-        K.set_image_dim_ordering('tf')
+        K.set_image_data_format('channels_last')
+        # K.set_image_dim_ordering('tf')
 
         x = inputs = Input(shape=self.config['input_shape'], dtype='float32')
 
