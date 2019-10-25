@@ -37,13 +37,13 @@ class Params:
         return self.__dict__
 
 
-def pixel_difference(y_true, y_pred, params):
-    """
-    Custom metrics for comparison of images
-    pixel by pixel.
-    """
-    input_shape = params.input_shape
-    batch_size = params.batch_size
-
-    cof = 100 / (input_shape[0] * input_shape[1] * batch_size)
-    return cof * K.sum(K.abs(y_true - y_pred))
+# def pixel_difference(y_true, y_pred, params):
+#     """
+#     Custom metrics for comparison of images
+#     pixel by pixel.
+#     """
+#     input_shape = params.input_shape
+#     batch_size = params.batch_size
+#
+#     cof = 100 / (input_shape[0] * input_shape[1] * batch_size)
+#     return cof * K.sum(K.abs(y_true - y_pred))
