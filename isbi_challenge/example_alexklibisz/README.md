@@ -8,8 +8,11 @@ All results are from src/models/unet_jocic.py implementation, which has an Argpa
 
 - All of the data is kept in the /data directory, so no need to download anything.
 - Make sure dependencies in requirements.txt are installed (you'll know when you run it).
-- Run the unet model to train: `python src/models/unet.py train` without saved weights, or with saved weights `python src/models/unet.py train --weights /path/to/weights_file.hdf5`.
-- To make a submission (i.e. predictions on testing data): `python src/models/unet.py submit --weights /path/to/weights_file.hdf5 --tiff /path/to/saved_submission.tiff`.
+- Run the unet model to train: `python3 src/models/unet.py train` without saved weights, or with saved weights `python3 src/models/unet.py train --weights /path/to/weights_file.hdf5`.
+- To make a submission (i.e. predictions on testing data): `python3 src/models/unet.py submit --weights /path/to/weights_file.hdf5 --tiff /path/to/saved_submission.tiff`.
+
+python3 src/models/unet.py submit --weights checkpoints/unet_64/weights_loss_trn.weights
+
 
 ## Results
 

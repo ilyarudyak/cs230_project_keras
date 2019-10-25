@@ -1,0 +1,11 @@
+{
+  "learning_rate": 0.001,
+  "input_shape": [512, 512, 1],
+  "loss": "binary_crossentropy",
+  "steps_per_epoch": 1000,
+  "epochs": 3,
+  "batch_size": 4,
+  "start_epoch": 0,
+  "last_step": 10,
+  "padding": "same"
+}
