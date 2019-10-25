@@ -9,5 +9,6 @@
   "last_step": 10,
   "padding": "same",
   "batch_size_val": 1,
-  "validation_steps": 3
+  "validation_steps": 3,
+  "batch_size_test": 1
 }

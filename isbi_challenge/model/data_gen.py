@@ -16,6 +16,7 @@ class ISBI2012:
 
         self.image_path = data_dir / 'train-volume.tif'
         self.mask_path = data_dir / 'train-labels.tif'
+        self.image_path_test = data_dir / 'test-volume.tif'
 
         self.validation_set_pages = set(validation_set_pages)
         self.test_set_pages = set(test_set_pages)
@@ -34,6 +35,7 @@ class ISBI2012:
 
         self.image_data = None
         self.mask_data = None
+        self.image_data_test = None
         self.load_data()
 
     def load_data(self):
@@ -51,6 +53,36 @@ class ISBI2012:
             mask_tif_volume.seek(i)
             self.image_data[i] = np.array(image_tif_volume.getdata()).reshape(image_shape[1:])
             self.mask_data[i] = np.array(mask_tif_volume.getdata()).reshape(mask_shape[1:])
+
+    def load_data_test(self):
+        image_tif_volume_test = Image.open(self.image_path_test)
+        image_shape = (self.page_count, image_tif_volume_test.size[0], image_tif_volume_test.size[1], 1)
+
+        self.image_data_test = np.empty(image_shape, dtype=float)
+
+        for i in range(self.page_count):
+            image_tif_volume_test.seek(i)
+            self.image_data_test[i] = np.array(image_tif_volume_test.getdata()).reshape(image_shape[1:])
+
+    # def test_generator(self, batch_size=1):
+    #
+    #     self.load_data_test()
+    #     augmentation = {'rescale': 1. / 255}
+    #
+    #     number_of_images = self.page_count
+    #     pages = range(number_of_images)
+    #     image_shape = (number_of_images, self.image_data_test.shape[1], self.image_data_test.shape[2], 1)
+    #     image_data = np.empty(image_shape, dtype=float)
+    #
+    #     for i, p in enumerate(pages):
+    #         image_data[i] = self.image_data_test[p]
+    #
+    #     image_gen = ImageDataGenerator(**augmentation)
+    #     image_gen.fit(image_data, augment=True)
+    #
+    #     image_generator = image_gen.flow(x=image_data, batch_size=batch_size, seed=self.seed)
+    #
+    #     return image_generator
 
     def generator(self, mode='training', batch_size=1):
         """

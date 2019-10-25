@@ -3,6 +3,7 @@ from model.data_gen import *
 from utils import *
 from keras.optimizers import Adam
 from keras.callbacks import TensorBoard, ModelCheckpoint
+import tifffile as tiff
 
 import warnings
 warnings.filterwarnings('ignore')
@@ -21,12 +22,9 @@ class Trainer:
 
         # directories and files
         self.data_dir = Path.home() / 'data/isbi2012'
-        self.weights_dir = self.data_dir / 'weights'
-        self.weight_file = self.weights_dir / f'weights.hdf5'
         self.experiment_dir = experiment_dir
-
-        if not os.path.exists(str(self.weights_dir)):
-            os.makedirs(str(self.weights_dir))
+        self.weight_file = self.experiment_dir / 'weights.hdf5'
+        self.pred_file = self.experiment_dir / 'test-volume-masks.tif'
 
         if not os.path.exists(str(self.experiment_dir)):
             os.makedirs(str(self.experiment_dir))
@@ -56,12 +54,12 @@ class Trainer:
         cof = 100 / (input_shape[0] * input_shape[1] * batch_size)
         return cof * K.sum(K.abs(y_true - y_pred))
 
-    def train(self, weight_file=None):
+    def train(self, load_weights=False):
         self.model.compile(optimizer=self.optimizer,
                            loss=self.params.loss,
                            metrics=self.metrics)
 
-        if weight_file:
+        if load_weights:
             self.model.load_weights(self.weight_file)
 
         train_generator = self.dataset.generator('training', batch_size=self.params.batch_size)
@@ -74,6 +72,12 @@ class Trainer:
                                  validation_data=valid_generator,
                                  validation_steps=self.params.validation_steps,
                                  callbacks=self.callbacks)
+
+    def predict(self):
+        self.model.load_weights(self.weight_file)
+        self.dataset.load_data_test()
+        test_masks = self.model.predict(self.dataset.image_data_test)
+        tiff.imsave(self.pred_file, test_masks)
 
 
 if __name__ == '__main__':
