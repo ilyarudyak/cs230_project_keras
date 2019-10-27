@@ -1,4 +1,3 @@
-# Unet implementation based on https://github.com/jocicmarko/ultrasound-nerve-segmentation
 import numpy as np
 np.random.seed(865)
 
