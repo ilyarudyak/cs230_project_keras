@@ -36,7 +36,7 @@ class Trainer:
         self.optimizer = Adam(lr=self.params.learning_rate)
 
         # metrics
-        self.metrics = ['pixel_diff', self.pixel_diff]
+        self.metrics = ['accuracy', self.pixel_diff]
 
         # callbacks
         weight_file = str(self.experiment_dir / 'weights')
@@ -45,8 +45,8 @@ class Trainer:
                         update_freq='epoch'),
             ModelCheckpoint(weight_file+'.{epoch:02d}-{val_pixel_diff:.2f}.hdf5',
                             save_weights_only=True,
-                            monitor='val_pixel_diff',
-                            save_best_only=True)
+                            monitor='val_acc',
+                            save_best_only=False)
         ]
 
     def pixel_diff(self, y_true, y_pred):
