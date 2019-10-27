@@ -247,3 +247,6 @@ pip-selfcheck.json
 *.net
 *.png
 *.h5
+events*
+*.hdf5
+*.swp
