@@ -43,9 +43,9 @@ class Trainer:
         self.callbacks = [
             TensorBoard(log_dir=str(self.experiment_dir),
                         update_freq='epoch'),
-            ModelCheckpoint(weight_file+'.{epoch:02d}-{val_acc:.2f}.hdf5',
+            ModelCheckpoint(weight_file+'.{epoch:02d}-{val_accuracy:.2f}.hdf5',
                             save_weights_only=True,
-                            monitor='val_acc',
+                            monitor='val_accuracy',
                             save_best_only=False)
         ]
 
