@@ -76,11 +76,12 @@ class Trainer:
     def predict(self):
         self.model.load_weights(self.weight_file)
         self.dataset.load_data_test()
-        test_masks = self.model.predict(self.dataset.image_data_test)
+        test_masks = self.model.predict(self.dataset.image_data_test,
+                                        batch_size=self.params.batch_size_test)
         tiff.imsave(self.pred_file, test_masks)
 
 
 if __name__ == '__main__':
     trainer = Trainer()
     trainer.train()
-    trainer.predict()
+    # trainer.predict()
