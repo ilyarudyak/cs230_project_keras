@@ -78,8 +78,9 @@ class Trainer:
     def predict(self, weight_file):
         self.model.load_weights(weight_file)
         self.dataset.load_data_test()
-        test_masks = self.model.predict(self.dataset.image_data_test,
+        test_masks = self.model.predict(self.dataset.image_data_test / 255.0,
                                         batch_size=self.params.batch_size_test)
+        test_masks = test_masks.round()
         tiff.imsave(self.pred_file, test_masks)
 
 
