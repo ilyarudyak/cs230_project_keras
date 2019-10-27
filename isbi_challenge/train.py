@@ -40,8 +40,8 @@ class Trainer:
 
         # callbacks
         self.callbacks = [
-            TensorBoard(log_dir=self.experiment_dir),
-            ModelCheckpoint(self.weight_file,
+            TensorBoard(log_dir=str(self.experiment_dir)),
+            ModelCheckpoint(str(self.weight_file),
                             save_weights_only=True,
                             monitor='val_loss',
                             save_best_only=True)
