@@ -3,7 +3,7 @@
   "input_shape": [512, 512, 1],
   "loss": "binary_crossentropy",
   "steps_per_epoch": 100,
-  "epochs": 1,
+  "epochs": 25,
   "batch_size": 4,
   "start_epoch": 0,
   "last_step": 10,
