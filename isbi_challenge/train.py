@@ -23,7 +23,7 @@ class Trainer:
         # directories and files
         self.data_dir = Path.home() / 'data/isbi2012'
         self.experiment_dir = experiment_dir
-        self.weight_file = self.experiment_dir / 'weights.hdf5'
+        # self.weight_file = self.experiment_dir / 'weights'
         self.pred_file = self.experiment_dir / 'test-volume-masks.tif'
 
         if not os.path.exists(str(self.experiment_dir)):
@@ -36,18 +36,20 @@ class Trainer:
         self.optimizer = Adam(lr=self.params.learning_rate)
 
         # metrics
-        self.metrics = ['accuracy', self.pixel_difference]
+        self.metrics = ['pixel_diff', self.pixel_diff]
 
         # callbacks
+        weight_file = str(self.experiment_dir / 'weights')
         self.callbacks = [
-            TensorBoard(log_dir=str(self.experiment_dir)),
-            ModelCheckpoint(str(self.weight_file),
+            TensorBoard(log_dir=str(self.experiment_dir),
+                        update_freq='epoch'),
+            ModelCheckpoint(weight_file+'.{epoch:02d}-{val_pixel_diff:.2f}.hdf5',
                             save_weights_only=True,
-                            monitor='val_loss',
+                            monitor='val_pixel_diff',
                             save_best_only=True)
         ]
 
-    def pixel_difference(self, y_true, y_pred):
+    def pixel_diff(self, y_true, y_pred):
         input_shape = self.params.input_shape
         batch_size = self.params.batch_size
 
@@ -73,8 +75,8 @@ class Trainer:
                                  validation_steps=self.params.validation_steps,
                                  callbacks=self.callbacks)
 
-    def predict(self):
-        self.model.load_weights(self.weight_file)
+    def predict(self, weight_file):
+        self.model.load_weights(weight_file)
         self.dataset.load_data_test()
         test_masks = self.model.predict(self.dataset.image_data_test,
                                         batch_size=self.params.batch_size_test)
