@@ -12,7 +12,7 @@ warnings.filterwarnings('ignore')
 class Trainer:
 
     def __init__(self,
-                 experiment_dir=Path('experiments/initial_model')):
+                 experiment_dir=Path('experiments/custom_metric')):
 
         # parameters
         self.params = Params(experiment_dir / 'params.json')
