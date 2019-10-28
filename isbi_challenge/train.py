@@ -2,7 +2,7 @@ from model.unet_v1 import *
 from model.data_gen import *
 from utils import *
 from keras.optimizers import Adam
-from keras.callbacks import TensorBoard, ModelCheckpoint
+from keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping
 import tifffile as tiff
 
 import warnings
@@ -49,10 +49,11 @@ class Trainer:
         self.callbacks = [
             TensorBoard(log_dir=str(self.experiment_dir),
                         update_freq='epoch'),
-            ModelCheckpoint(weight_file+'.{epoch:02d}-{val_dice_coef:.2f}.hdf5',
+            ModelCheckpoint(weight_file+'.{epoch:02d}-{val_loss:.2f}.hdf5',
                             save_weights_only=True,
-                            monitor='val_dice_coef',
-                            save_best_only=True)
+                            monitor='val_loss',
+                            save_best_only=True),
+            EarlyStopping(monitor='val_loss', patience=5)
         ]
 
     def pixel_diff(self, y_true, y_pred):
