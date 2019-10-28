@@ -36,7 +36,8 @@ class Trainer:
         self.optimizer = Adam(lr=self.params.learning_rate)
 
         # metrics and loss
-        # self.metrics = ['accuracy', dice_coef]
+        # self.metrics = ['accuracy', pixel_diff]
+        # self.loss = self.params.loss
         self.metrics = [dice_coef]
         self.loss = bcdl_loss
         self.model.compile(optimizer=self.optimizer,
@@ -48,7 +49,7 @@ class Trainer:
         self.callbacks = [
             TensorBoard(log_dir=str(self.experiment_dir),
                         update_freq='epoch'),
-            ModelCheckpoint(weight_file+'.{epoch:02d}-{val_accuracy:.2f}.hdf5',
+            ModelCheckpoint(weight_file+'.{epoch:02d}-{val_dice_coef:.2f}.hdf5',
                             save_weights_only=True,
                             monitor='val_dice_coef',
                             save_best_only=True)
