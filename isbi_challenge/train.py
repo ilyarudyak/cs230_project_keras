@@ -36,7 +36,7 @@ class Trainer:
         self.optimizer = Adam(lr=self.params.learning_rate)
 
         # metrics
-        self.metrics = ['accuracy', self.pixel_diff]
+        self.metrics = ['accuracy', dice_coef]
 
         # callbacks
         weight_file = str(self.experiment_dir / 'weights')
