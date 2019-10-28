@@ -39,6 +39,9 @@ class Trainer:
         # self.metrics = ['accuracy', dice_coef]
         self.metrics = [dice_coef]
         self.loss = bcdl_loss
+        self.model.compile(optimizer=self.optimizer,
+                           loss=self.loss,
+                           metrics=self.metrics)
 
         # callbacks
         weight_file = str(self.experiment_dir / 'weights')
@@ -59,9 +62,6 @@ class Trainer:
         return cof * K.sum(K.abs(y_true - y_pred))
 
     def train(self, load_weights=False):
-        self.model.compile(optimizer=self.optimizer,
-                           loss=self.loss,
-                           metrics=self.metrics)
 
         if load_weights:
             self.model.load_weights(self.weight_file)
