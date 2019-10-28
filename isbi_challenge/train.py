@@ -35,8 +35,10 @@ class Trainer:
         # optimizer
         self.optimizer = Adam(lr=self.params.learning_rate)
 
-        # metrics
-        self.metrics = ['accuracy', dice_coef]
+        # metrics and loss
+        # self.metrics = ['accuracy', dice_coef]
+        self.metrics = [dice_coef]
+        self.loss = bcdl_loss
 
         # callbacks
         weight_file = str(self.experiment_dir / 'weights')
@@ -45,8 +47,8 @@ class Trainer:
                         update_freq='epoch'),
             ModelCheckpoint(weight_file+'.{epoch:02d}-{val_accuracy:.2f}.hdf5',
                             save_weights_only=True,
-                            monitor='val_accuracy',
-                            save_best_only=False)
+                            monitor='val_dice_coef',
+                            save_best_only=True)
         ]
 
     def pixel_diff(self, y_true, y_pred):
@@ -58,7 +60,7 @@ class Trainer:
 
     def train(self, load_weights=False):
         self.model.compile(optimizer=self.optimizer,
-                           loss=self.params.loss,
+                           loss=self.loss,
                            metrics=self.metrics)
 
         if load_weights:

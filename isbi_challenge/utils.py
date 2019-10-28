@@ -4,6 +4,7 @@ import os
 import shutil
 import keras.backend as K
 import tensorflow as tf
+from keras import losses
 
 
 class Params:
@@ -52,4 +53,12 @@ def dice_coef(y_true, y_pred):
     intersection = K.sum(y_true_flat_flip * y_pred_flat_flip)
     sum_smooth = K.sum(y_true_flat_flip) + K.sum(y_pred_flat_flip) + smooth
     return (2.0 * intersection + smooth) / sum_smooth
+
+
+def dice_loss(y_true, y_pred):
+    return 1 - dice_coef(y_true, y_pred)
+
+
+def bcdl_loss(y_true, y_pred):
+    return losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
 
