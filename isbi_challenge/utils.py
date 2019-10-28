@@ -43,12 +43,12 @@ def dice_coef(y_true, y_pred):
     smooth = 1.0
     y_true_flat = K.flatten(y_true)
     y_true_flat_flip = 1 - tf.round(y_true_flat)
-    print(y_true_flat, y_true_flat_flip)
+    # print(y_true_flat, y_true_flat_flip)
     y_pred_flat = K.flatten(y_pred)
     y_pred_flat_flip = 1 - tf.round(y_pred_flat)
-    print(y_pred_flat, y_pred_flat_flip)
+    # print(y_pred_flat, y_pred_flat_flip)
 
-    print((2 * K.sum(y_true_flat * y_pred_flat) + smooth) / (K.sum(y_true_flat) + K.sum(y_pred_flat) + smooth))
+    # print((2 * K.sum(y_true_flat * y_pred_flat) + smooth) / (K.sum(y_true_flat) + K.sum(y_pred_flat) + smooth))
 
     intersection = K.sum(y_true_flat_flip * y_pred_flat_flip)
     sum_smooth = K.sum(y_true_flat_flip) + K.sum(y_pred_flat_flip) + smooth
