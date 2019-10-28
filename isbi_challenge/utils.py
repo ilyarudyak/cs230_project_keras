@@ -3,6 +3,7 @@ import logging
 import os
 import shutil
 import keras.backend as K
+import tensorflow as tf
 
 
 class Params:
@@ -37,13 +38,14 @@ class Params:
         return self.__dict__
 
 
-# def pixel_difference(y_true, y_pred, params):
-#     """
-#     Custom metrics for comparison of images
-#     pixel by pixel.
-#     """
-#     input_shape = params.input_shape
-#     batch_size = params.batch_size
-#
-#     cof = 100 / (input_shape[0] * input_shape[1] * batch_size)
-#     return cof * K.sum(K.abs(y_true - y_pred))
+def dice_coef(y_true, y_pred):
+    smooth = 1.0
+    y_true_flat = K.flatten(y_true)
+    y_true_flat_flip = 1 - tf.round(y_true_flat)
+    y_pred_flat = K.flatten(y_pred)
+    y_pred_flat_flip = 1 - tf.round(y_pred_flat)
+
+    intersection = K.sum(y_true_flat_flip * y_pred_flat_flip)
+    sum_smooth = K.sum(y_true_flat_flip) + K.sum(y_pred_flat_flip) + smooth
+    return (2.0 * intersection + smooth) / sum_smooth
+

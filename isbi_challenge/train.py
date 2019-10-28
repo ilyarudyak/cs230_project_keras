@@ -83,8 +83,17 @@ class Trainer:
         test_masks = test_masks.round()
         tiff.imsave(self.pred_file, test_masks)
 
+    def predict_image(self, img_arr, weight_file):
+        self.model.load_weights(weight_file)
+        img_arr = np.expand_dims(img_arr / 255., axis=0)
+        mask_pred = self.model.predict(img_arr).round()
+        mask_pred = mask_pred.squeeze(axis=0)
+        return mask_pred
+
 
 if __name__ == '__main__':
     trainer = Trainer()
     trainer.train()
     # trainer.predict()
+
+
