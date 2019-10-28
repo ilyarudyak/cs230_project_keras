@@ -9,8 +9,8 @@ class ISBI2012:
 
     def __init__(self,
                  data_dir=Path.home() / 'data/isbi2012',
-                 validation_set_pages=(5, 15, 25),
-                 test_set_pages=(0, 10, 20)):
+                 validation_set_pages=(23, 24, 25, 26, 27, 28, 29),
+                 test_set_pages=()):
 
         self.seed = 42
 
