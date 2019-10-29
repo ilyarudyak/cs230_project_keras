@@ -108,7 +108,7 @@ class Trainer:
 
 if __name__ == '__main__':
 
-    learning_rates = [.005, .001, .0005, .0001, .00005]
+    learning_rates = [.001, .0005, .0001, .00005]
     params = utils.Params('experiments/learning_rates/params.json')
     for lr in learning_rates:
         print(f'lr={lr}')
