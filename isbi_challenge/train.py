@@ -1,4 +1,5 @@
-from model.unet_v1 import *
+# from model.unet_v1 import *
+from model.unet_v2 import Unet
 from model.data_gen import *
 from utils import *
 from keras.optimizers import Adam
@@ -12,7 +13,7 @@ warnings.filterwarnings('ignore')
 class Trainer:
 
     def __init__(self,
-                 experiment_dir=Path('experiments/custom_metric')):
+                 experiment_dir=Path('experiments/updated_unet')):
 
         # parameters
         self.params = Params(experiment_dir / 'params.json')
@@ -53,7 +54,9 @@ class Trainer:
                             save_weights_only=True,
                             monitor='val_loss',
                             save_best_only=True),
-            EarlyStopping(monitor='val_loss', patience=5)
+            EarlyStopping(monitor='val_loss',
+                          patience=5,
+                          verbose=1)
         ]
 
     def pixel_diff(self, y_true, y_pred):

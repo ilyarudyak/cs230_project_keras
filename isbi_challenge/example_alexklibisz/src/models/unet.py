@@ -69,26 +69,31 @@ class UNet():
 
         x = inputs = Input(shape=self.config['input_shape'], dtype='float32')
 
+        # conv1
         x = Reshape(self.config['input_shape'] + (1,))(x)
         x = Conv2D(32,  3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(32,  3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = dc_0_out = Dropout(0.2)(x)
 
+        # conv2
         x = MaxPooling2D(2, 2)(x)
         x = Conv2D(64, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(64, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = dc_1_out = Dropout(0.2)(x)
 
+        # conv3
         x = MaxPooling2D(2, 2)(x)
         x = Conv2D(128, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(128, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = dc_2_out = Dropout(0.2)(x)
 
+        # conv4
         x = MaxPooling2D(2, 2)(x)
         x = Conv2D(256, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(256, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = dc_3_out = Dropout(0.2)(x)
 
+        # exp1
         x = MaxPooling2D(2, 2)(x)
         x = Conv2D(512, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(512, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
@@ -96,24 +101,28 @@ class UNet():
         x = concatenate([x, dc_3_out])
         x = Dropout(0.2)(x)
 
+        # exp2
         x = Conv2D(256, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(256, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2DTranspose(128, 2, strides=2, activation='relu', kernel_initializer='he_normal')(x)
-        x = concatenate([x, dc_2_out])
+        x = concatenate([x, dc_2_out])  # conv3
         x = Dropout(0.2)(x)
 
+        # exp3
         x = Conv2D(128, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(128, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2DTranspose(64, 2, strides=2, activation='relu', kernel_initializer='he_normal')(x)
-        x = concatenate([x, dc_1_out])
+        x = concatenate([x, dc_1_out])  # conv2
         x = Dropout(0.2)(x)
 
+        # exp4
         x = Conv2D(64, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(64, 3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2DTranspose(32,  2, strides=2, activation='relu', kernel_initializer='he_normal')(x)
         x = concatenate([x, dc_0_out])
         x = Dropout(0.2)(x)
 
+        # final
         x = Conv2D(32,  3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(32,  3, padding='same', activation='relu', kernel_initializer='he_normal')(x)
         x = Conv2D(2, 1, activation='softmax')(x)

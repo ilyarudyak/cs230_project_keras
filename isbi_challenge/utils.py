@@ -5,6 +5,7 @@ import shutil
 import keras.backend as K
 import tensorflow as tf
 from keras import losses
+import matplotlib.pyplot as plt
 
 
 class Params:
@@ -61,4 +62,15 @@ def dice_loss(y_true, y_pred):
 
 def bcdl_loss(y_true, y_pred):
     return losses.binary_crossentropy(y_true, y_pred) + dice_loss(y_true, y_pred)
+
+
+def plot_masks(img_arr, masks):
+    fig, ax = plt.subplots(1, len(masks)+1, figsize=(15, 15))
+    [axi.set_xticks([]) for axi in ax.ravel()]
+    [axi.set_yticks([]) for axi in ax.ravel()]
+    ax[0].imshow(img_arr.reshape(512, 512), cmap='gray')
+    ax[0].title.set_text('image')
+    for i in range(len(masks)):
+        ax[i+1].imshow(masks[i].reshape(512, 512), cmap='gray')
+        ax[i+1].title.set_text(f'mask_{i+1}')
 

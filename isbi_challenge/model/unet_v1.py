@@ -61,4 +61,5 @@ class Unet:
         conv = layers.Conv2D(filters=2, kernel_size=3, activation='relu', padding='same', name="OUT_3")(exp4)
         output_layer = layers.Conv2D(filters=1, kernel_size=1, activation='sigmoid', name="OUT")(conv)
         model = keras.Model(input_layer, output_layer)
+
         return model
