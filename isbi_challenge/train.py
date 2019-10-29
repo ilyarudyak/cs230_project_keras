@@ -1,22 +1,29 @@
 # from model.unet_v1 import *
 from model.unet_v2 import Unet
 from model.data_gen import *
-from utils import *
+# from utils import *
+import utils
 from keras.optimizers import Adam
 from keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping
 import tifffile as tiff
+import os
+import keras.backend as K
 
 import warnings
+
 warnings.filterwarnings('ignore')
 
 
 class Trainer:
 
     def __init__(self,
-                 experiment_dir=Path('experiments/updated_unet')):
+                 params,
+                 experiment_dir=Path('experiments/learning_rates')
+                 ):
 
         # parameters
-        self.params = Params(experiment_dir / 'params.json')
+        # self.params = Params(experiment_dir / 'params.json')
+        self.params = params
 
         # model
         self.model = Unet(params=self.params).build_model()
@@ -39,8 +46,8 @@ class Trainer:
         # metrics and loss
         # self.metrics = ['accuracy', pixel_diff]
         # self.loss = self.params.loss
-        self.metrics = [dice_coef]
-        self.loss = bcdl_loss
+        self.metrics = [utils.dice_coef]
+        self.loss = utils.bcdl_loss
         self.model.compile(optimizer=self.optimizer,
                            loss=self.loss,
                            metrics=self.metrics)
@@ -50,7 +57,7 @@ class Trainer:
         self.callbacks = [
             TensorBoard(log_dir=str(self.experiment_dir),
                         update_freq='epoch'),
-            ModelCheckpoint(weight_file+'.{epoch:02d}-{val_loss:.2f}.hdf5',
+            ModelCheckpoint(weight_file + '.{epoch:02d}-{val_loss:.2f}.hdf5',
                             save_weights_only=True,
                             monitor='val_loss',
                             save_best_only=True),
@@ -74,13 +81,14 @@ class Trainer:
         train_generator = self.dataset.generator('training', batch_size=self.params.batch_size)
         valid_generator = self.dataset.generator('validation', batch_size=self.params.batch_size_val)
 
-        self.model.fit_generator(generator=train_generator,
-                                 steps_per_epoch=self.params.steps_per_epoch,
-                                 epochs=self.params.epochs,
-                                 initial_epoch=self.params.start_epoch,
-                                 validation_data=valid_generator,
-                                 validation_steps=self.params.validation_steps,
-                                 callbacks=self.callbacks)
+        history = self.model.fit_generator(generator=train_generator,
+                                           steps_per_epoch=self.params.steps_per_epoch,
+                                           epochs=self.params.epochs,
+                                           initial_epoch=self.params.start_epoch,
+                                           validation_data=valid_generator,
+                                           validation_steps=self.params.validation_steps,
+                                           callbacks=self.callbacks)
+        return history
 
     def predict(self, weight_file):
         self.model.load_weights(weight_file)
@@ -99,8 +107,11 @@ class Trainer:
 
 
 if __name__ == '__main__':
-    trainer = Trainer()
-    trainer.train()
-    # trainer.predict()
 
-
+    learning_rates = [.1, .01, .005, .001, .0005, .0001]
+    params = utils.Params('experiments/learning_rates/params.json')
+    for lr in learning_rates:
+        params.learning_rate = lr
+        trainer = Trainer(params=params)
+        history = trainer.train()
+        utils.save_history(history, trainer)

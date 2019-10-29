@@ -6,6 +6,7 @@ import keras.backend as K
 import tensorflow as tf
 from keras import losses
 import matplotlib.pyplot as plt
+import pickle
 
 
 class Params:
@@ -73,4 +74,11 @@ def plot_masks(img_arr, masks):
     for i in range(len(masks)):
         ax[i+1].imshow(masks[i].reshape(512, 512), cmap='gray')
         ax[i+1].title.set_text(f'mask_{i+1}')
+
+
+def save_history(history, trainer):
+    lr = trainer.params.learning_rate
+    filename = trainer.experiment_dir / f'history_lr_{lr}'
+    with open(filename, 'wb') as f:
+        pickle.dump(history.history, f)
 
