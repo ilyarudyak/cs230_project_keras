@@ -4,7 +4,7 @@ from model.data_gen import *
 # from utils import *
 import utils
 from keras.optimizers import Adam
-from keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping
+from keras.callbacks import TensorBoard, ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
 import tifffile as tiff
 import os
 import keras.backend as K
@@ -17,13 +17,13 @@ warnings.filterwarnings('ignore')
 class Trainer:
 
     def __init__(self,
-                 params,
+                 # params,
                  experiment_dir=Path('experiments/learning_rates')
                  ):
 
         # parameters
-        # self.params = Params(experiment_dir / 'params.json')
-        self.params = params
+        self.params = utils.Params(experiment_dir / 'params.json')
+        # self.params = params
 
         # model
         self.model = Unet(params=self.params).build_model()
@@ -57,12 +57,32 @@ class Trainer:
         self.callbacks = [
             TensorBoard(log_dir=str(self.experiment_dir),
                         update_freq='epoch'),
-            ModelCheckpoint(weight_file + '.{epoch:02d}-{val_loss:.2f}.hdf5',
+            ModelCheckpoint(f'{weight_file}_loss.hdf5',
+                            save_weights_only=True,
+                            monitor='loss',
+                            save_best_only=True,
+                            verbose=1),
+            ModelCheckpoint(f'{weight_file}_val_loss.hdf5',
                             save_weights_only=True,
                             monitor='val_loss',
-                            save_best_only=True),
+                            save_best_only=True,
+                            verbose=1),
+            ReduceLROnPlateau(monitor='loss',
+                              factor=0.9,
+                              patience=3,
+                              cooldown=2,
+                              min_lr=1e-5,
+                              verbose=1),
+            ReduceLROnPlateau(monitor='val_loss',
+                              factor=0.9,
+                              patience=3,
+                              cooldown=2,
+                              min_lr=1e-5,
+                              verbose=1),
             EarlyStopping(monitor='val_loss',
-                          patience=5,
+                          min_delta=1e-3,
+                          patience=10,
+                          mode='min',
                           verbose=1)
         ]
 
@@ -107,12 +127,15 @@ class Trainer:
 
 
 if __name__ == '__main__':
+    trainer = Trainer()
+    history = trainer.train()
+    utils.save_history(history, trainer)
 
-    learning_rates = [.001, .0005, .0001, .00005]
-    params = utils.Params('experiments/learning_rates/params.json')
-    for lr in learning_rates:
-        print(f'lr={lr}')
-        params.learning_rate = lr
-        trainer = Trainer(params=params)
-        history = trainer.train()
-        utils.save_history(history, trainer)
+    # learning_rates = [.001, .0005, .0001, .00005]
+    # params = utils.Params('experiments/learning_rates/params.json')
+    # for lr in learning_rates:
+    #     print(f'lr={lr}')
+    #     params.learning_rate = lr
+    #     trainer = Trainer(params=params)
+    #     history = trainer.train()
+    #     utils.save_history(history, trainer)

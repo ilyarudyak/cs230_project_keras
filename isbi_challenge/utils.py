@@ -7,6 +7,7 @@ import tensorflow as tf
 from keras import losses
 import matplotlib.pyplot as plt
 import pickle
+from pathlib import Path
 
 
 class Params:
@@ -76,9 +77,37 @@ def plot_masks(img_arr, masks):
         ax[i+1].title.set_text(f'mask_{i+1}')
 
 
-def save_history(history, trainer):
+def save_history(history, trainer, is_lr=False):
     lr = trainer.params.learning_rate
-    filename = trainer.experiment_dir / f'history_lr_{lr}'
+    if is_lr:
+        filename = trainer.experiment_dir / f'history_lr_{lr}.pickle'
+    else:
+        filename = trainer.experiment_dir / 'history.pickle'
     with open(filename, 'wb') as f:
         pickle.dump(history.history, f)
 
+
+def load_history(filename):
+    with open(filename, "rb") as f:
+        history = pickle.load(f)
+    return history
+
+
+def plot_metric_lr(metric, dir_path):
+    for path in dir_path.glob('hist*'):
+        history = load_history(path)
+        lr = get_lt(path)
+        plt.plot(history[metric], label=f'{lr}')
+    plt.legend()
+    plt.title(metric)
+
+
+def get_lt(path):
+    filename = str(path)
+    return filename.split('_')[-1]
+
+
+if __name__ == '__main__':
+    dir_path = Path('experiments/learning_rates/')
+    plot_metric_lr('loss', dir_path)
+    plt.show()
