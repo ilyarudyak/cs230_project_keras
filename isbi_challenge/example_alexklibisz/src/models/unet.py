@@ -21,6 +21,8 @@ from src.utils.model import dice_coef, dice_coef_loss, KerasHistoryPlotCallback,
     jaccard_coef, jaccard_coef_int
 from src.utils.data import random_transforms
 from src.utils.isbi_utils import isbi_get_data_montage
+from src.utils.model import save_history, load_history
+from pathlib import Path
 
 
 class UNet():
@@ -154,10 +156,10 @@ class UNet():
 
         logger.info('Training for %d epochs.' % self.config['nb_epoch'])
 
-        self.net.fit_generator(generator=gen_trn, steps_per_epoch=100, epochs=self.config['nb_epoch'],
+        history = self.net.fit_generator(generator=gen_trn, steps_per_epoch=100, epochs=self.config['nb_epoch'],
                                validation_data=gen_val, validation_steps=20, verbose=1, callbacks=cb)
 
-        return
+        return history
 
     def batch_gen_trn(self, imgs, msks, batch_size, transform=False, rng=np.random):
 
@@ -226,9 +228,10 @@ def main():
     if args['which'] == 'train':
         model.compile()
         load_weights()
-        model.net.summary()
+        # model.net.summary()
         model.load_data()
-        model.train()
+        history = model.train()
+        save_history(history, Path('checkpoints/unet_64'))
 
     elif args['which'] == 'submit':
         out_path = '%s/test-volume-masks.tif' % model.checkpoint_path

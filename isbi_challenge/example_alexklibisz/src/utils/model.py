@@ -3,12 +3,16 @@ from keras import backend as K
 from math import ceil
 from time import ctime
 import logging
+import tensorflow as tf
+import pickle
+
 
 def jaccard_coef(y_true, y_pred):
     intersection = K.sum(y_true * y_pred, axis=[0, -1, -2])
     sum_ = K.sum(y_true + y_pred, axis=[0, -1, -2])
     jac = (intersection + K.epsilon()) / (sum_ - intersection + K.epsilon())
     return K.mean(jac)
+
 
 def jaccard_coef_int(y_true, y_pred):
     y_pred_pos = K.round(K.clip(y_pred, 0, 1))
@@ -17,20 +21,26 @@ def jaccard_coef_int(y_true, y_pred):
     jac = (intersection + K.epsilon()) / (sum_ - intersection + K.epsilon())
     return K.mean(jac)
 
+
 def mean_diff(y_true, y_pred):
     return K.mean(y_pred) - K.mean(y_true)
+
 
 def act_mean(y_true, y_pred):
     return K.mean(y_pred)
 
+
 def act_min(y_true, y_pred):
     return K.min(y_pred)
+
 
 def act_max(y_true, y_pred):
     return K.max(y_pred)
 
+
 def act_std(y_true, y_pred):
     return K.std(y_pred)
+
 
 def tru_pos(y_true, y_pred):
     axis = K.ndim(y_true) - 1
@@ -39,12 +49,14 @@ def tru_pos(y_true, y_pred):
     prod = ytam * ypam
     return K.sum(prod)
 
+
 def fls_pos(y_true, y_pred):
     axis = K.ndim(y_true) - 1
     ytam = K.argmax(y_true, axis=axis)
     ypam = K.argmax(y_pred, axis=axis)
     diff = ypam - ytam
     return K.sum(K.clip(diff, 0, 1))
+
 
 def tru_neg(y_true, y_pred):
     axis = K.ndim(y_true) - 1
@@ -53,12 +65,14 @@ def tru_neg(y_true, y_pred):
     prod = ytam * ypam
     return K.sum(prod)
 
+
 def fls_neg(y_true, y_pred):
     axis = K.ndim(y_true) - 1
     ytam = K.argmin(y_true, axis=axis)
     ypam = K.argmin(y_pred, axis=axis)
     diff = ypam - ytam
     return K.sum(K.clip(diff, 0, 1))
+
 
 def precision_onehot(y_true, y_pred):
     '''Custom implementation of the keras precision metric to work with
@@ -71,6 +85,7 @@ def precision_onehot(y_true, y_pred):
     precision = true_positives / (predicted_positives + K.epsilon())
     return precision
 
+
 def recall_onehot(y_true, y_pred):
     '''Custom implementation of the keras recall metric to work with
         one-hot encoded outputs.'''
@@ -82,12 +97,14 @@ def recall_onehot(y_true, y_pred):
     recall = true_positives / (possible_positives + K.epsilon())
     return recall
 
+
 def fmeasure_onehot(y_true, y_pred):
     '''Custom implementation of the keras fmeasure metric to work with
     one-hot encoded outputs.'''
     p = precision_onehot(y_true, y_pred)
     r = recall_onehot(y_true, y_pred)
     return 2 * (p * r) / (p + r + K.epsilon())
+
 
 def dice_coef(y_true, y_pred):
     smooth = 1.0
@@ -96,8 +113,26 @@ def dice_coef(y_true, y_pred):
     intersection = K.sum(y_true_flat * y_pred_flat)
     return (2.0 * intersection + smooth) / (K.sum(y_true_flat) + K.sum(y_pred_flat) + smooth)
 
+
+def dice_coef_corr(y_true, y_pred):
+    smooth = 1.0
+    y_true_flat = K.flatten(y_true)
+    y_true_flat_flip = 1 - tf.round(y_true_flat)
+    # print(y_true_flat, y_true_flat_flip)
+    y_pred_flat = K.flatten(y_pred)
+    y_pred_flat_flip = 1 - tf.round(y_pred_flat)
+    # print(y_pred_flat, y_pred_flat_flip)
+
+    # print((2 * K.sum(y_true_flat * y_pred_flat) + smooth) / (K.sum(y_true_flat) + K.sum(y_pred_flat) + smooth))
+
+    intersection = K.sum(y_true_flat_flip * y_pred_flat_flip)
+    sum_smooth = K.sum(y_true_flat_flip) + K.sum(y_pred_flat_flip) + smooth
+    return (2.0 * intersection + smooth) / sum_smooth
+
+
 def dice_coef_loss(y_true, y_pred):
     return -1.0 * dice_coef(y_true, y_pred)
+
 
 class KerasHistoryPlotCallback(Callback):
 
@@ -113,9 +148,9 @@ class KerasHistoryPlotCallback(Callback):
         import matplotlib.pyplot as plt
 
         if len(self.logs) == 0:
-            self.logs = {key:[] for key in logs.keys()}
+            self.logs = {key: [] for key in logs.keys()}
 
-        for key,val in logs.items():
+        for key, val in logs.items():
             self.logs[key].append(val)
 
         nb_metrics = len([k for k in self.logs.keys() if not k.startswith('val')])
@@ -144,22 +179,36 @@ class KerasHistoryPlotCallback(Callback):
         else:
             plt.show()
 
+
 class KerasSimpleLoggerCallback(Callback):
 
     def on_train_begin(self, logs={}):
         self.prev_logs = None
         return
+
     def on_epoch_end(self, epoch, logs={}):
 
         logger = logging.getLogger(__name__)
 
         if self.prev_logs == None:
-            for key,val in logs.items():
-                logger.info('%15s: %.5lf' % (key,val))
+            for key, val in logs.items():
+                logger.info('%15s: %.5lf' % (key, val))
         else:
-            for key,val in logs.items():
+            for key, val in logs.items():
                 diff = val - self.prev_logs[key]
                 logger.info('%20s: %15.4lf %5s %15.4lf' % \
-                    (key, val, '+' if diff > 0 else '-', abs(diff)))
+                            (key, val, '+' if diff > 0 else '-', abs(diff)))
 
         self.prev_logs = logs
+
+
+def save_history(history, dir_path):
+    filename = dir_path / 'history.pickle'
+    with open(filename, 'wb') as f:
+        pickle.dump(history.history, f)
+
+
+def load_history(filename):
+    with open(filename, "rb") as f:
+        history = pickle.load(f)
+    return history

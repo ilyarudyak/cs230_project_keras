@@ -93,21 +93,21 @@ def load_history(filename):
     return history
 
 
-def plot_metric_lr(metric, dir_path):
+def plot_metric(metric, dir_path):
     for path in dir_path.glob('hist*'):
         history = load_history(path)
-        lr = get_lt(path)
-        plt.plot(history[metric], label=f'{lr}')
+        param = get_param(path)
+        plt.plot(history[metric], label=f'{param}')
     plt.legend()
     plt.title(metric)
 
 
-def get_lt(path):
+def get_param(path):
     filename = str(path)
-    return filename.split('_')[-1]
+    return filename.split('_')[-1][:-7]
 
 
 if __name__ == '__main__':
     dir_path = Path('experiments/learning_rates/')
-    plot_metric_lr('loss', dir_path)
+    plot_metric('loss', dir_path)
     plt.show()
