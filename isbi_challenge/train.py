@@ -83,7 +83,7 @@ class Trainer:
                               verbose=1),
             EarlyStopping(monitor='val_loss',
                           min_delta=1e-3,
-                          patience=10,
+                          patience=15,
                           mode='min',
                           verbose=1)
         ]

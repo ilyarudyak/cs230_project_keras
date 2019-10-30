@@ -1,7 +1,7 @@
 {
   "learning_rate": 0.0005,
-  "steps_per_epoch": 10,
-  "epochs": 3,
+  "steps_per_epoch": 100,
+  "epochs": 50,
   "batch_size": 4,
   "start_epoch": 0,
   "last_step": 10,
@@ -12,5 +12,5 @@
   "input_shape": [512, 512, 1],
   "kernel_initializer": "he_normal",
   "init_filters": 64,
-  "dropout": 0.2
+  "dropout": 0.4
 }
