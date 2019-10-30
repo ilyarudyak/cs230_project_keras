@@ -120,9 +120,23 @@ def random_transforms(img_arr):
         lambda x: np.rot90(x, 3),
     ]
 
+    img_arr_crop = random_crop(img_arr)
+
     idx = np.random.randint(0, len(all_transforms))
     transform = all_transforms[idx]
-    return transform(img_arr)
+    img_arr_transf = transform(img_arr_crop)
+
+    return img_arr_transf
+
+
+def random_crop(img_arr, random_crop_size=64):
+    # Note: image_data_format is 'channel_last'
+    assert img_arr.shape[2] == 3
+    height, width = img_arr.shape[0], img_arr.shape[1]
+    dy, dx = random_crop_size
+    x = np.random.randint(0, width - dx + 1)
+    y = np.random.randint(0, height - dy + 1)
+    return img_arr[y:(y + dy), x:(x + dx), :]
 
 
 if __name__ == '__main__':
