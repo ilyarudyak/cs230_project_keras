@@ -18,7 +18,7 @@ class Trainer:
 
     def __init__(self,
                  # params,
-                 experiment_dir=Path('experiments/learning_rates')
+                 experiment_dir=Path('experiments/lr_tuning')
                  ):
 
         # parameters
