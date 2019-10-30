@@ -129,9 +129,9 @@ class Trainer:
 
 
 if __name__ == '__main__':
-    trainer = Trainer()
-    history = trainer.train()
-    utils.save_history(history, trainer)
+    # trainer = Trainer()
+    # history = trainer.train()
+    # utils.save_history(history, trainer)
 
     # tuning dropout
     dropout_rates = [.2, .3, .4, .5]
@@ -140,6 +140,7 @@ if __name__ == '__main__':
         print(f'dropout_rate={dr}')
         params.dropout = dr
         trainer = Trainer(params=params)
+        history = trainer.train()
         utils.save_history(history, trainer, param_name='dropout')
 
     # tuning learning rate
