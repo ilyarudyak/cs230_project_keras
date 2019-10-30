@@ -77,10 +77,10 @@ def plot_masks(img_arr, masks):
         ax[i+1].title.set_text(f'mask_{i+1}')
 
 
-def save_history(history, trainer, is_lr=False):
-    lr = trainer.params.learning_rate
-    if is_lr:
-        filename = trainer.experiment_dir / f'history_lr_{lr}.pickle'
+def save_history(history, trainer, param_name=None):
+    param = trainer.params.dict[param_name]
+    if param_name:
+        filename = trainer.experiment_dir / f'history_{param_name}_{param}.pickle'
     else:
         filename = trainer.experiment_dir / 'history.pickle'
     with open(filename, 'wb') as f:

@@ -17,13 +17,15 @@ warnings.filterwarnings('ignore')
 class Trainer:
 
     def __init__(self,
-                 # params,
-                 experiment_dir=Path('experiments/lr_tuning')
+                 experiment_dir=Path('experiments/lr_tuning'),
+                 params=None,
                  ):
 
         # parameters
-        self.params = utils.Params(experiment_dir / 'params.json')
-        # self.params = params
+        if params:
+            self.params = params
+        else:
+            self.params = utils.Params(experiment_dir / 'params.json')
 
         # model
         self.model = Unet(params=self.params).build_model()
@@ -68,13 +70,13 @@ class Trainer:
                             save_best_only=True,
                             verbose=1),
             ReduceLROnPlateau(monitor='loss',
-                              factor=0.7,
+                              factor=0.5,
                               patience=3,
                               cooldown=2,
                               min_lr=1e-5,
                               verbose=1),
             ReduceLROnPlateau(monitor='val_loss',
-                              factor=0.7,
+                              factor=0.5,
                               patience=3,
                               cooldown=2,
                               min_lr=1e-5,
@@ -131,6 +133,16 @@ if __name__ == '__main__':
     history = trainer.train()
     utils.save_history(history, trainer)
 
+    # tuning dropout
+    dropout_rates = [.2, .3, .4, .5]
+    params = utils.Params('experiments/learning_rates/params.json')
+    for dr in dropout_rates:
+        print(f'dropout_rate={dr}')
+        params.dropout = dr
+        trainer = Trainer(params=params)
+        utils.save_history(history, trainer, param_name='dropout')
+
+    # tuning learning rate
     # learning_rates = [.001, .0005, .0001, .00005]
     # params = utils.Params('experiments/learning_rates/params.json')
     # for lr in learning_rates:
