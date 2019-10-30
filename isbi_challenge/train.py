@@ -17,7 +17,7 @@ warnings.filterwarnings('ignore')
 class Trainer:
 
     def __init__(self,
-                 experiment_dir=Path('experiments/dropout'),
+                 experiment_dir=Path('experiments/augmentation'),
                  params=None,
                  ):
 
@@ -129,19 +129,19 @@ class Trainer:
 
 
 if __name__ == '__main__':
-    # trainer = Trainer()
-    # history = trainer.train()
-    # utils.save_history(history, trainer)
+    trainer = Trainer()
+    history = trainer.train()
+    utils.save_history(history, trainer)
 
     # tuning dropout
-    dropout_rates = [.2, .3, .4, .5]
-    params = utils.Params('experiments/dropout/params.json')
-    for dr in dropout_rates:
-        print(f'dropout_rate={dr}')
-        params.dropout = dr
-        trainer = Trainer(params=params)
-        history = trainer.train()
-        utils.save_history(history, trainer, param_name='dropout')
+    # dropout_rates = [.2, .3, .4, .5]
+    # params = utils.Params('experiments/dropout/params.json')
+    # for dr in dropout_rates:
+    #     print(f'dropout_rate={dr}')
+    #     params.dropout = dr
+    #     trainer = Trainer(params=params)
+    #     history = trainer.train()
+    #     utils.save_history(history, trainer, param_name='dropout')
 
     # tuning learning rate
     # learning_rates = [.001, .0005, .0001, .00005]

@@ -8,6 +8,7 @@ from keras import losses
 import matplotlib.pyplot as plt
 import pickle
 from pathlib import Path
+import numpy as np
 
 
 class Params:
@@ -105,6 +106,22 @@ def plot_metric(metric, dir_path):
 def get_param(path):
     filename = str(path)
     return filename.split('_')[-1][:-7]
+
+
+def random_transforms(img_arr):
+
+    all_transforms = [
+        lambda x: x,
+        lambda x: np.fliplr(x),
+        lambda x: np.flipud(x),
+        lambda x: np.rot90(x, 1),
+        lambda x: np.rot90(x, 2),
+        lambda x: np.rot90(x, 3),
+    ]
+
+    idx = np.random.randint(0, len(all_transforms))
+    transform = all_transforms[idx]
+    return transform(img_arr)
 
 
 if __name__ == '__main__':

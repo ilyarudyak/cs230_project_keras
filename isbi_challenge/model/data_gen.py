@@ -3,13 +3,14 @@ import numpy as np
 # from keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from pathlib import Path
+import utils
 
 
 class ISBI2012:
 
     def __init__(self,
                  data_dir=Path.home() / 'data/isbi2012',
-                 validation_set_pages=(23, 24, 25, 26, 27, 28, 29),
+                 validation_set_pages=(24, 25, 26, 27, 28, 29),
                  test_set_pages=()):
 
         self.seed = 42
@@ -24,14 +25,17 @@ class ISBI2012:
         self.training_set_pages = set(range(self.page_count)) - self.validation_set_pages - self.test_set_pages
 
         self.augmentation = {
-            'rotation_range': 0.2,
-            'width_shift_range': 0.05,
-            'height_shift_range': 0.05,
-            'shear_range': 0.05,
-            'zoom_range': 0.05,
-            'horizontal_flip': True,
-            'fill_mode': 'nearest'
+            'preprocessing_function': utils.random_transforms
         }
+        # self.augmentation = {
+        #     'rotation_range': 0.2,
+        #     'width_shift_range': 0.05,
+        #     'height_shift_range': 0.05,
+        #     'shear_range': 0.05,
+        #     'zoom_range': 0.05,
+        #     'horizontal_flip': True,
+        #     'fill_mode': 'nearest'
+        # }
 
         self.image_data = None
         self.mask_data = None
@@ -121,7 +125,9 @@ class ISBI2012:
         image_gen.fit(image_data, augment=True)
         mask_gen.fit(mask_data, augment=True)
         # set seed to get identical augmentation of an image and its mask
+        np.random.seed(self.seed)
         image_generator = image_gen.flow(x=image_data, batch_size=batch_size, seed=self.seed)
+        np.random.seed(self.seed)
         mask_generator = mask_gen.flow(x=mask_data, batch_size=batch_size, seed=self.seed)
 
         data_generator = zip(image_generator, mask_generator)
