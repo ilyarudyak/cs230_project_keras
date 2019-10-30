@@ -17,7 +17,7 @@ warnings.filterwarnings('ignore')
 class Trainer:
 
     def __init__(self,
-                 experiment_dir=Path('experiments/lr_tuning'),
+                 experiment_dir=Path('experiments/dropout'),
                  params=None,
                  ):
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
     # tuning dropout
     dropout_rates = [.2, .3, .4, .5]
-    params = utils.Params('experiments/learning_rates/params.json')
+    params = utils.Params('experiments/dropout/params.json')
     for dr in dropout_rates:
         print(f'dropout_rate={dr}')
         params.dropout = dr
