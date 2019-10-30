@@ -12,5 +12,5 @@
   "input_shape": [512, 512, 1],
   "kernel_initializer": "he_normal",
   "init_filters": 64,
-  "dropout": 0.2
+  "dropout": 0.3
 }

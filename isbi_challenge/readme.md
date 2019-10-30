@@ -5,15 +5,7 @@
 - should we use cross entropy or custom function?
 
 ## plans
-- metrics
-- model, including transposed conv., init
-- learning rate and its annealing
-- look ar alex klibitz
-- elastic deformation
-- retrain on 30 images?
 
-- make a model for ultrasound 
-- check ideas from kaggle
-
-- read a few more project from cs231 on segmentation
-- look one more time for isbi repositories
+1) elastic deformation
+2) modified loss on the border
+3) retrain on all images
