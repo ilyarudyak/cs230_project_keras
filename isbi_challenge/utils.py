@@ -79,8 +79,9 @@ def plot_masks(img_arr, masks):
 
 
 def save_history(history, trainer, param_name=None):
-    param = trainer.params.dict[param_name]
+
     if param_name:
+        param = trainer.params.dict[param_name]
         filename = trainer.experiment_dir / f'history_{param_name}_{param}.pickle'
     else:
         filename = trainer.experiment_dir / 'history.pickle'
