@@ -61,9 +61,9 @@ class Trainer:
         self.callbacks = [
             TensorBoard(log_dir=str(self.experiment_dir),
                         update_freq='epoch'),
-            ModelCheckpoint(f'{weight_file}_loss.hdf5',
+            ModelCheckpoint(f'{weight_file}_val_dice_coef.hdf5',
                             save_weights_only=True,
-                            monitor='loss',
+                            monitor='val_dice_coef',
                             save_best_only=True,
                             verbose=1),
             ModelCheckpoint(f'{weight_file}_val_loss.hdf5',
