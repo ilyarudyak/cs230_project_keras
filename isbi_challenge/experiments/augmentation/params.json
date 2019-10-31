@@ -13,5 +13,5 @@
   "crop_size": 512,
   "kernel_initializer": "he_normal",
   "init_filters": 64,
-  "dropout": 0.2
+  "dropout": 0.4
 }
