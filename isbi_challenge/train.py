@@ -135,7 +135,7 @@ def search_crop(crop_sizes=(64, 128, 256)):
 
     for crop_size in crop_sizes:
         print(f'crop_size={crop_size}')
-        params = utils.Params(experiment_dir)
+        params = utils.Params(experiment_dir / 'params.json')
         params.input_shape = [crop_size, crop_size, 1]
         params.crop_size = crop_size
 
