@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import pickle
 from pathlib import Path
 import numpy as np
-from train import Trainer
 from skimage.transform import resize
 
 
