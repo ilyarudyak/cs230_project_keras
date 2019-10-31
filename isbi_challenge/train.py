@@ -65,6 +65,7 @@ class Trainer:
                             save_weights_only=True,
                             monitor='val_dice_coef',
                             save_best_only=True,
+                            mode='max',
                             verbose=1),
             ModelCheckpoint(f'{weight_file}_val_loss.hdf5',
                             save_weights_only=True,
