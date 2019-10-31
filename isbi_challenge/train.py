@@ -42,7 +42,7 @@ class Trainer:
             os.makedirs(str(self.experiment_dir))
 
         # dataset
-        self.dataset = ISBI2012(crop_size=params.crop_size)
+        self.dataset = ISBI2012(crop_size=self.params.crop_size)
 
         # optimizer
         self.optimizer = Adam(lr=self.params.learning_rate)
