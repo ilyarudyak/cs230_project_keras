@@ -1,0 +1,21 @@
+{
+  "learning_rate": 0.0005,
+
+  "steps_per_epoch": 10,
+  "epochs": 3,
+  "batch_size": 4,
+  "start_epoch": 0,
+  "last_step": 10,
+
+  "batch_size_val": 4,
+  "validation_steps": 10,
+  "batch_size_test": 1,
+
+  "kernel_initializer": "he_normal",
+
+  "input_shape": [512, 512, 1],
+  "crop_size": 512,
+  "init_filters": 32,
+  "input_dropout": 0.2,
+  "dropout": 0.4
+}
