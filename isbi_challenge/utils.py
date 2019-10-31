@@ -10,6 +10,7 @@ import pickle
 from pathlib import Path
 import numpy as np
 from skimage.transform import resize
+from elastic_def import elastic_transform
 
 
 class Params:
@@ -165,7 +166,17 @@ def resize_batch(batch, target_size):
     return batch_resize
 
 
+def elastic_def_batch(image_batch, mask_batch):
+    image_batch_tf, mask_batch_tf = np.zeros_like(image_batch), np.zeros_like(mask_batch)
+    for i in range(image_batch.shape[0]):
+        img_merge = np.concatenate((image_batch[i], mask_batch[i]), axis=2)
+        img_merge_tf = elastic_transform(img_merge,
+                                         img_merge.shape[1] * 2,
+                                         img_merge.shape[1] * 0.08,
+                                         img_merge.shape[1] * 0.08)
+        image_batch_tf[i], mask_batch_tf[i] = np.array_split(img_merge_tf, 2, axis=2)
 
+    return image_batch_tf, mask_batch_tf
 
 
 if __name__ == '__main__':

@@ -1,6 +1,7 @@
 # from model.unet_v1 import *
 from model.unet_v2 import Unet
-from model.data_gen import ISBI2012
+# from model.data_gen import ISBI2012
+from model.data_gen_elastic_tf import ISBI2012
 # from utils import *
 import utils
 from keras.optimizers import Adam
