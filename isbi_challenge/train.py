@@ -130,17 +130,14 @@ class Trainer:
         return mask_pred
 
     def search_crop(self, crop_sizes=(64, 128, 256)):
-        params = utils.Params('experiments/augmentation/params.json')
         for crop_size in crop_sizes:
             print(f'crop_size={crop_size}')
-            params.input_shape = [crop_size, crop_size, 1]
+            self.params.input_shape = [crop_size, crop_size, 1]
             history = self.train()
             utils.save_history(history, self, param_name='crop_size')
 
 
 if __name__ == '__main__':
-    trainer = Trainer()
-    # history = trainer.train()
-    # utils.save_history(history, trainer)
-
+    params = utils.Params('experiments/augmentation/params.json')
+    trainer = Trainer(params=params)
     trainer.search_crop()
