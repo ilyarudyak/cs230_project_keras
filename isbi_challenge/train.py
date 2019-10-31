@@ -133,8 +133,9 @@ class Trainer:
         for crop_size in crop_sizes:
             print(f'crop_size={crop_size}')
             self.params.input_shape = [crop_size, crop_size, 1]
+            self.params.crop_size = crop_size
             history = self.train()
-            utils.save_history(history, self, param_name='input_shape')
+            utils.save_history(history, self, param_name='crop_size')
 
 
 if __name__ == '__main__':
