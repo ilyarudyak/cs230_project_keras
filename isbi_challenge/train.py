@@ -85,7 +85,7 @@ class Trainer:
                               verbose=1),
             EarlyStopping(monitor='val_loss',
                           min_delta=1e-3,
-                          patience=15,
+                          patience=10,
                           mode='min',
                           verbose=1)
         ]
@@ -132,11 +132,14 @@ class Trainer:
 
 def search_crop(crop_sizes=(64, 128, 256)):
     experiment_dir = Path('experiments/augmentation')
+
     for crop_size in crop_sizes:
         print(f'crop_size={crop_size}')
-        trainer = Trainer(experiment_dir=experiment_dir)
-        trainer.params.input_shape = [crop_size, crop_size, 1]
-        trainer.params.crop_size = crop_size
+        params = utils.Params(experiment_dir)
+        params.input_shape = [crop_size, crop_size, 1]
+        params.crop_size = crop_size
+
+        trainer = Trainer(params=params)
         history = trainer.train()
         utils.save_history(history, trainer, param_name='crop_size')
 
