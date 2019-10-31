@@ -9,6 +9,7 @@ class Unet:
         self.input_shape = params.input_shape
         self.kernel_initializer = params.kernel_initializer
         self.init_filters = params.init_filters
+        self.input_dropout = params.input_dropout
         self.dropout = params.dropout
 
         # no tuning for these parameters
@@ -78,6 +79,7 @@ class Unet:
     def build_model(self):
 
         input_layer = Input(shape=self.input_shape, dtype='float32')
+        input_layer = Dropout(rate=self.input_dropout)(input_layer)
 
         conv1 = self.contracting_block(filters=self.init_filters, in_layer=input_layer, is_max_pool=False)
         conv2 = self.contracting_block(filters=self.init_filters * 2, in_layer=conv1)

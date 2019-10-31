@@ -19,7 +19,7 @@ warnings.filterwarnings('ignore')
 class Trainer:
 
     def __init__(self,
-                 experiment_dir=Path('experiments/augmentation'),
+                 experiment_dir=Path('experiments/crop_64'),
                  params=None,
                  ):
 
@@ -72,20 +72,20 @@ class Trainer:
                             save_best_only=True,
                             verbose=1),
             ReduceLROnPlateau(monitor='loss',
-                              factor=0.7,
+                              factor=0.75,
                               patience=5,
                               cooldown=3,
                               min_lr=1e-5,
                               verbose=1),
             ReduceLROnPlateau(monitor='val_loss',
-                              factor=0.7,
+                              factor=0.75,
                               patience=5,
                               cooldown=3,
                               min_lr=1e-5,
                               verbose=1),
             EarlyStopping(monitor='val_loss',
                           min_delta=1e-3,
-                          patience=15,
+                          patience=20,
                           mode='min',
                           verbose=1)
         ]
@@ -144,5 +144,15 @@ def search_crop(crop_sizes=(64, 128, 256)):
         utils.save_history(history, trainer, param_name='crop_size')
 
 
+def search_dropout(dropout_rates=(.4, .5, .6, .7, .8)):
+    params = utils.Params('experiments/crop_64/params.json')
+    for dr in dropout_rates:
+        print(f'dropout_rate={dr}')
+        params.dropout = dr
+        trainer = Trainer(params=params)
+        history = trainer.train()
+        utils.save_history(history, trainer, param_name='dropout')
+
+
 if __name__ == '__main__':
-    search_crop(crop_sizes=[32])
+    search_dropout()

@@ -110,7 +110,7 @@ def get_param(path):
     return filename.split('_')[-1][:-7]
 
 
-def random_transforms(img_arr):
+def random_transforms(img_arr, n_trans=3):
 
     all_transforms = [
         lambda x: x,
@@ -121,12 +121,12 @@ def random_transforms(img_arr):
         lambda x: np.rot90(x, 3),
     ]
 
-    idx = np.random.randint(0, len(all_transforms))
-    # print(f'idx={idx}')
-    transform = all_transforms[idx]
-    img_arr_transf = transform(img_arr)
+    for i in range(n_trans):
+        idx = np.random.randint(0, len(all_transforms))
+        transform = all_transforms[idx]
+        img_arr = transform(img_arr)
 
-    return img_arr_transf
+    return img_arr
 
 
 def random_crop(img_arr, crop_size=64):
@@ -165,14 +165,7 @@ def resize_batch(batch, target_size):
     return batch_resize
 
 
-# def search_dropout(dropout_rates=(.2, .3, .4, .5)):
-#     params = Params('experiments/dropout/params.json')
-#     for dr in dropout_rates:
-#         print(f'dropout_rate={dr}')
-#         params.dropout = dr
-#         trainer = Trainer(params=params)
-#         history = trainer.train()
-#         save_history(history, trainer, param_name='dropout')
+
 
 
 if __name__ == '__main__':
