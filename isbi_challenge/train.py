@@ -155,4 +155,7 @@ def search_dropout(dropout_rates=(.2, .3, .4, .5)):
 
 
 if __name__ == '__main__':
-    search_dropout()
+    trainer = Trainer()
+    history = trainer.train()
+    utils.save_history(history, trainer)
+
