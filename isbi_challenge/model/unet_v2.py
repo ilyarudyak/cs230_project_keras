@@ -79,9 +79,9 @@ class Unet:
     def build_model(self):
 
         input_layer = Input(shape=self.input_shape, dtype='float32')
-        input_layer = Dropout(rate=self.input_dropout)(input_layer)
+        input_layer_dr = Dropout(rate=self.input_dropout)(input_layer)
 
-        conv1 = self.contracting_block(filters=self.init_filters, in_layer=input_layer, is_max_pool=False)
+        conv1 = self.contracting_block(filters=self.init_filters, in_layer=input_layer_dr, is_max_pool=False)
         conv2 = self.contracting_block(filters=self.init_filters * 2, in_layer=conv1)
         conv3 = self.contracting_block(filters=self.init_filters * 4, in_layer=conv2)
         conv4 = self.contracting_block(filters=self.init_filters * 8, in_layer=conv3)
