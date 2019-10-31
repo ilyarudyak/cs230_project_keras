@@ -147,14 +147,14 @@ def random_crop_batch(batch, crop_size=64):
     return batch_crop
 
 
-def search_lr(learning_rates=(.001, .0005, .0001, .00005)):
-    params = Params('experiments/learning_rates/params.json')
-    for lr in learning_rates:
-        print(f'lr={lr}')
-        params.learning_rate = lr
-        trainer = Trainer(params=params)
-        history = trainer.train()
-        save_history(history, trainer, param_name='lr')
+# def search_lr(learning_rates=(.001, .0005, .0001, .00005)):
+#     params = Params('experiments/learning_rates/params.json')
+#     for lr in learning_rates:
+#         print(f'lr={lr}')
+#         params.learning_rate = lr
+#         trainer = Trainer(params=params)
+#         history = trainer.train()
+#         save_history(history, trainer, param_name='lr')
 
 
 def resize_batch(batch, target_size):
@@ -165,14 +165,14 @@ def resize_batch(batch, target_size):
     return batch_resize
 
 
-def search_dropout(dropout_rates=(.2, .3, .4, .5)):
-    params = Params('experiments/dropout/params.json')
-    for dr in dropout_rates:
-        print(f'dropout_rate={dr}')
-        params.dropout = dr
-        trainer = Trainer(params=params)
-        history = trainer.train()
-        save_history(history, trainer, param_name='dropout')
+# def search_dropout(dropout_rates=(.2, .3, .4, .5)):
+#     params = Params('experiments/dropout/params.json')
+#     for dr in dropout_rates:
+#         print(f'dropout_rate={dr}')
+#         params.dropout = dr
+#         trainer = Trainer(params=params)
+#         history = trainer.train()
+#         save_history(history, trainer, param_name='dropout')
 
 
 if __name__ == '__main__':
