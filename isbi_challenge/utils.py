@@ -176,16 +176,6 @@ def search_dropout(dropout_rates=(.2, .3, .4, .5)):
         save_history(history, trainer, param_name='dropout')
 
 
-def search_crop(crop_sizes=(64, 128, 256)):
-    params = Params('experiments/augmentation/params.json')
-    for crop_size in crop_sizes:
-        print(f'crop_size={crop_size}')
-        params.input_shape = [crop_size, crop_size, 1]
-        trainer = Trainer(params=params)
-        history = trainer.train()
-        save_history(history, trainer, param_name='crop_size')
-
-
 if __name__ == '__main__':
     dir_path = Path('experiments/learning_rates/')
     plot_metric('loss', dir_path)
