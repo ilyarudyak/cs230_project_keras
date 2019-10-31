@@ -40,7 +40,7 @@ class Trainer:
             os.makedirs(str(self.experiment_dir))
 
         # dataset
-        self.dataset = ISBI2012(data_dir=self.data_dir)
+        self.dataset = ISBI2012(target_size=params.input_shape[0])
 
         # optimizer
         self.optimizer = Adam(lr=self.params.learning_rate)
@@ -129,26 +129,8 @@ class Trainer:
 
 
 if __name__ == '__main__':
-    trainer = Trainer()
-    history = trainer.train()
-    utils.save_history(history, trainer)
+    # trainer = Trainer()
+    # history = trainer.train()
+    # utils.save_history(history, trainer)
 
-    # tuning dropout
-    # dropout_rates = [.2, .3, .4, .5]
-    # params = utils.Params('experiments/dropout/params.json')
-    # for dr in dropout_rates:
-    #     print(f'dropout_rate={dr}')
-    #     params.dropout = dr
-    #     trainer = Trainer(params=params)
-    #     history = trainer.train()
-    #     utils.save_history(history, trainer, param_name='dropout')
-
-    # tuning learning rate
-    # learning_rates = [.001, .0005, .0001, .00005]
-    # params = utils.Params('experiments/learning_rates/params.json')
-    # for lr in learning_rates:
-    #     print(f'lr={lr}')
-    #     params.learning_rate = lr
-    #     trainer = Trainer(params=params)
-    #     history = trainer.train()
-    #     utils.save_history(history, trainer)
+    utils.search_crop()

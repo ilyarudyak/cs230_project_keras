@@ -11,10 +11,13 @@ class ISBI2012:
 
     def __init__(self,
                  data_dir=Path.home() / 'data/isbi2012',
+                 target_size=512,
                  validation_set_pages=(24, 25, 26, 27, 28, 29),
                  test_set_pages=()):
 
         self.seed = 42
+
+        self.target_size = target_size
 
         self.image_path = data_dir / 'train-volume.tif'
         self.mask_path = data_dir / 'train-labels.tif'
@@ -69,7 +72,7 @@ class ISBI2012:
             image_tif_volume_test.seek(i)
             self.image_data_test[i] = np.array(image_tif_volume_test.getdata()).reshape(image_shape[1:])
 
-    def generator(self, mode='training', batch_size=1):
+    def generator(self, batch_size=1,  mode='training'):
         """
         Returns a generator for batches of images and corresponded labels.
         Generator yields a pair (image_batch[batch_size, image_height, image_width, channels],
@@ -88,6 +91,7 @@ class ISBI2012:
         else:
             raise ValueError('Unknown dataset mode ', mode)
 
+        # split data for training and val
         number_of_images = len(pages)
         image_shape = (number_of_images, self.image_data.shape[1], self.image_data.shape[2], 1)
         mask_shape = (number_of_images, self.mask_data.shape[1], self.mask_data.shape[2], 1)
@@ -101,20 +105,26 @@ class ISBI2012:
         image_gen = ImageDataGenerator(**augmentation)
         mask_gen = ImageDataGenerator(**augmentation)
 
-        image_gen.fit(image_data, augment=True)
-        mask_gen.fit(mask_data, augment=True)
+        # image_gen.fit(image_data, augment=True)
+        # mask_gen.fit(mask_data, augment=True)
 
         # set seed to get identical augmentation of an image and its mask
-        seed = int(time.time())
+        seed = self.seed
         np.random.seed(seed)
-        image_generator = image_gen.flow(x=image_data, batch_size=batch_size, seed=seed)
+        image_generator = image_gen.flow(x=image_data, batch_size=batch_size, seed=seed, shuffle=False)
         np.random.seed(seed)
-        mask_generator = mask_gen.flow(x=mask_data, batch_size=batch_size, seed=seed)
+        mask_generator = mask_gen.flow(x=mask_data, batch_size=batch_size, seed=seed, shuffle=False)
 
         data_generator = zip(image_generator, mask_generator)
         for image_batch, mask_batch in data_generator:
-            np.random.seed(seed)
-            image_batch = utils.random_crop_batch(image_batch)
-            np.random.seed(seed)
-            mask_batch = utils.random_crop_batch(mask_batch)
+            if mode == 'training':
+                np.random.seed(seed)
+                image_batch = utils.random_crop_batch(image_batch, crop_size=self.target_size)
+                np.random.seed(seed)
+                mask_batch = utils.random_crop_batch(mask_batch, crop_size=self.target_size)
+            if mode == 'validation':
+                np.random.seed(seed)
+                image_batch = utils.resize_batch(image_batch, target_size=self.target_size)
+                np.random.seed(seed)
+                mask_batch = utils.resize_batch(mask_batch, target_size=self.target_size)
             yield image_batch, mask_batch

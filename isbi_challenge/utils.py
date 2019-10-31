@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import pickle
 from pathlib import Path
 import numpy as np
+from train import Trainer
+from skimage.transform import resize
 
 
 class Params:
@@ -121,17 +123,18 @@ def random_transforms(img_arr):
     ]
 
     idx = np.random.randint(0, len(all_transforms))
+    print(f'idx={idx}')
     transform = all_transforms[idx]
     img_arr_transf = transform(img_arr)
 
     return img_arr_transf
 
 
-def random_crop(img_arr, crop_size=(64, 64)):
+def random_crop(img_arr, crop_size=64):
     # Note: image_data_format is 'channel_last'
     assert img_arr.shape[2] == 1
     height, width = img_arr.shape[0], img_arr.shape[1]
-    dy, dx = crop_size
+    dy, dx = crop_size, crop_size
     x = np.random.randint(0, width - dx + 1)
     y = np.random.randint(0, height - dy + 1)
     return img_arr[y:(y + dy), x:(x + dx), :]
@@ -141,8 +144,46 @@ def random_crop_batch(batch, crop_size=64):
     n, _, _, c = batch.shape
     batch_crop = np.zeros((n, crop_size, crop_size, c))
     for i in range(n):
-        batch_crop[i] = random_crop(batch[i])
+        batch_crop[i] = random_crop(batch[i], crop_size=crop_size)
     return batch_crop
+
+
+def search_lr(learning_rates=(.001, .0005, .0001, .00005)):
+    params = Params('experiments/learning_rates/params.json')
+    for lr in learning_rates:
+        print(f'lr={lr}')
+        params.learning_rate = lr
+        trainer = Trainer(params=params)
+        history = trainer.train()
+        save_history(history, trainer, param_name='lr')
+
+
+def resize_batch(batch, target_size):
+    n, _, _, c = batch.shape
+    batch_resize = np.zeros((n, target_size, target_size, c))
+    for i in range(n):
+        batch_resize[i] = resize(batch[i], output_shape=(target_size, target_size, 1))
+    return batch_resize
+
+
+def search_dropout(dropout_rates=(.2, .3, .4, .5)):
+    params = Params('experiments/dropout/params.json')
+    for dr in dropout_rates:
+        print(f'dropout_rate={dr}')
+        params.dropout = dr
+        trainer = Trainer(params=params)
+        history = trainer.train()
+        save_history(history, trainer, param_name='dropout')
+
+
+def search_crop(crop_sizes=(64, 128, 256)):
+    params = Params('experiments/augmentation/params.json')
+    for crop_size in crop_sizes:
+        print(f'crop_size={crop_size}')
+        params.input_shape = [crop_size, crop_size, 1]
+        trainer = Trainer(params=params)
+        history = trainer.train()
+        save_history(history, trainer, param_name='crop_size')
 
 
 if __name__ == '__main__':
