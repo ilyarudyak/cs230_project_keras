@@ -102,8 +102,8 @@ class Trainer:
         if load_weights:
             self.model.load_weights(self.weight_file)
 
-        train_generator = self.dataset.generator('training', batch_size=self.params.batch_size)
-        valid_generator = self.dataset.generator('validation', batch_size=self.params.batch_size_val)
+        train_generator = self.dataset.generator(mode='training', batch_size=self.params.batch_size)
+        valid_generator = self.dataset.generator(mode='validation', batch_size=self.params.batch_size_val)
 
         history = self.model.fit_generator(generator=train_generator,
                                            steps_per_epoch=self.params.steps_per_epoch,
