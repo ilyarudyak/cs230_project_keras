@@ -144,7 +144,7 @@ def search_crop(crop_sizes=(64, 128, 256)):
         utils.save_history(history, trainer, param_name='crop_size')
 
 
-def search_dropout(dropout_rates=(.4, .5, .6, .7, .8)):
+def search_dropout(dropout_rates=(.2, .3, .4, .5)):
     params = utils.Params('experiments/crop_64/params.json')
     for dr in dropout_rates:
         print(f'dropout_rate={dr}')

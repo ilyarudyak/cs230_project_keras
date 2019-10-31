@@ -8,7 +8,7 @@
   "last_step": 10,
 
   "batch_size_val": 4,
-  "validation_steps": 1000,
+  "validation_steps": 10,
   "batch_size_test": 1,
 
   "kernel_initializer": "he_normal",
@@ -16,6 +16,6 @@
   "input_shape": [64, 64, 1],
   "crop_size": 64,
   "init_filters": 32,
-  "input_dropout": 0.8,
+  "input_dropout": 0.2,
   "dropout": 0.4
 }
