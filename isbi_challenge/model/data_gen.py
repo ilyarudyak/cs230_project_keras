@@ -11,13 +11,13 @@ class ISBI2012:
 
     def __init__(self,
                  data_dir=Path.home() / 'data/isbi2012',
-                 target_size=512,
+                 crop_size=512,
                  validation_set_pages=(24, 25, 26, 27, 28, 29),
                  test_set_pages=()):
 
         self.seed = 42
 
-        self.target_size = target_size
+        self.crop_size = crop_size
 
         self.image_path = data_dir / 'train-volume.tif'
         self.mask_path = data_dir / 'train-labels.tif'
@@ -119,12 +119,12 @@ class ISBI2012:
         for image_batch, mask_batch in data_generator:
             if mode == 'training':
                 np.random.seed(seed)
-                image_batch = utils.random_crop_batch(image_batch, crop_size=self.target_size)
+                image_batch = utils.random_crop_batch(image_batch, crop_size=self.crop_size)
                 np.random.seed(seed)
-                mask_batch = utils.random_crop_batch(mask_batch, crop_size=self.target_size)
+                mask_batch = utils.random_crop_batch(mask_batch, crop_size=self.crop_size)
             if mode == 'validation':
                 np.random.seed(seed)
-                image_batch = utils.resize_batch(image_batch, target_size=self.target_size)
+                image_batch = utils.resize_batch(image_batch, target_size=self.crop_size)
                 np.random.seed(seed)
-                mask_batch = utils.resize_batch(mask_batch, target_size=self.target_size)
+                mask_batch = utils.resize_batch(mask_batch, target_size=self.crop_size)
             yield image_batch, mask_batch

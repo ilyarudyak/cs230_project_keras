@@ -42,7 +42,7 @@ class Trainer:
             os.makedirs(str(self.experiment_dir))
 
         # dataset
-        self.dataset = ISBI2012(target_size=params.input_shape[0])
+        self.dataset = ISBI2012(crop_size=params.crop_size)
 
         # optimizer
         self.optimizer = Adam(lr=self.params.learning_rate)
@@ -129,16 +129,17 @@ class Trainer:
         mask_pred = mask_pred.squeeze(axis=0)
         return mask_pred
 
-    def search_crop(self, crop_sizes=(64, 128, 256)):
-        for crop_size in crop_sizes:
-            print(f'crop_size={crop_size}')
-            self.params.input_shape = [crop_size, crop_size, 1]
-            self.params.crop_size = crop_size
-            history = self.train()
-            utils.save_history(history, self, param_name='crop_size')
+
+def search_crop(crop_sizes=(64, 128, 256)):
+    experiment_dir = Path('experiments/augmentation')
+    for crop_size in crop_sizes:
+        print(f'crop_size={crop_size}')
+        trainer = Trainer(experiment_dir=experiment_dir)
+        trainer.params.input_shape = [crop_size, crop_size, 1]
+        trainer.params.crop_size = crop_size
+        history = trainer.train()
+        utils.save_history(history, trainer, param_name='crop_size')
 
 
 if __name__ == '__main__':
-    params = utils.Params('experiments/augmentation/params.json')
-    trainer = Trainer(params=params)
-    trainer.search_crop()
+    search_crop()
