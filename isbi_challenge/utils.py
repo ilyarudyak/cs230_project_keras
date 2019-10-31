@@ -122,7 +122,7 @@ def random_transforms(img_arr):
     ]
 
     idx = np.random.randint(0, len(all_transforms))
-    print(f'idx={idx}')
+    # print(f'idx={idx}')
     transform = all_transforms[idx]
     img_arr_transf = transform(img_arr)
 
