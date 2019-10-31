@@ -145,4 +145,4 @@ def search_crop(crop_sizes=(64, 128, 256)):
 
 
 if __name__ == '__main__':
-    search_crop()
+    search_crop(crop_sizes=[32])
