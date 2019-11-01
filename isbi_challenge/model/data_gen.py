@@ -121,14 +121,4 @@ class ISBI2012:
             image_batch = utils.random_crop_batch(image_batch, crop_size=self.crop_size)
             np.random.seed(seed)
             mask_batch = utils.random_crop_batch(mask_batch, crop_size=self.crop_size)
-            # if mode == 'training':
-            #     np.random.seed(seed)
-            #     image_batch = utils.random_crop_batch(image_batch, crop_size=self.crop_size)
-            #     np.random.seed(seed)
-            #     mask_batch = utils.random_crop_batch(mask_batch, crop_size=self.crop_size)
-            # if mode == 'validation':
-            #     np.random.seed(seed)
-            #     image_batch = utils.resize_batch(image_batch, target_size=self.crop_size)
-            #     np.random.seed(seed)
-            #     mask_batch = utils.resize_batch(mask_batch, target_size=self.crop_size)
             yield image_batch, mask_batch

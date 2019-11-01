@@ -115,7 +115,14 @@ class ISBI2012:
 
         data_generator = zip(image_generator, mask_generator)
         for image_batch, mask_batch in data_generator:
+
             np.random.seed(seed)
             if mode == 'training':
                 image_batch, mask_batch = utils.elastic_def_batch(image_batch, mask_batch)
+
+            np.random.seed(seed)
+            image_batch = utils.random_crop_batch(image_batch, crop_size=self.crop_size)
+            np.random.seed(seed)
+            mask_batch = utils.random_crop_batch(mask_batch, crop_size=self.crop_size)
+
             yield image_batch, mask_batch

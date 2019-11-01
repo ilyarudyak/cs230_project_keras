@@ -13,8 +13,8 @@
 
   "kernel_initializer": "he_normal",
 
-  "input_shape": [512, 512, 1],
-  "crop_size": 512,
+  "input_shape": [64, 64, 1],
+  "crop_size": 64,
   "init_filters": 32,
   "input_dropout": 0.2,
   "dropout": 0.4
