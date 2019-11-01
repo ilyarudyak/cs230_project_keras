@@ -126,4 +126,6 @@ class ISBI2012:
             np.random.seed(seed)
             mask_batch = utils.random_crop_batch(mask_batch, crop_size=self.crop_size)
 
+            print(image_batch.shape, mask_batch.shape)
+
             yield image_batch, mask_batch
