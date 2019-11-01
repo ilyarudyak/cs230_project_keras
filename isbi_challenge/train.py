@@ -20,7 +20,7 @@ warnings.filterwarnings('ignore')
 class Trainer:
 
     def __init__(self,
-                 experiment_dir=Path('experiments/crop_64'),
+                 experiment_dir=Path('experiments/elastic_def'),
                  params=None,
                  ):
 
