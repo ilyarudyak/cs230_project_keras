@@ -11,7 +11,7 @@ class ISBI2012:
 
     def __init__(self,
                  data_dir=Path.home() / 'data/isbi2012',
-                 crop_size=512,
+                 crop_size=64,
                  validation_set_pages=(24, 25, 26, 27, 28, 29),
                  test_set_pages=()):
 
