@@ -115,6 +115,7 @@ class ISBI2012:
 
         data_generator = zip(image_generator, mask_generator)
         for image_batch, mask_batch in data_generator:
+            print(image_batch.shape, mask_batch.shape)
 
             np.random.seed(seed)
             if mode == 'training':
