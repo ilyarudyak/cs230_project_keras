@@ -24,7 +24,7 @@ class Trainer:
                            metrics=['accuracy'])
 
     def train(self):
-        history = self.fit_generator(
+        history = self.model.fit_generator(
             self.train_data_gen,
             steps_per_epoch=int(np.ceil(self.params.total_train / float(self.params.BATCH_SIZE))),
             epochs=EPOCHS,
