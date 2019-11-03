@@ -27,7 +27,7 @@ class Trainer:
         history = self.model.fit_generator(
             self.train_data_gen,
             steps_per_epoch=int(np.ceil(self.params.total_train / float(self.params.BATCH_SIZE))),
-            epochs=EPOCHS,
+            epochs=self.params.EPOCHS,
             validation_data=self.val_data_gen,
             validation_steps=int(np.ceil(self.params.total_val / float(self.params.BATCH_SIZE)))
         )
