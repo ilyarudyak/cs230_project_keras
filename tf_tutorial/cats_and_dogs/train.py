@@ -4,16 +4,23 @@ from model import ConvNet
 from data_prep import get_generators
 import numpy as np
 
+import logging
+import tensorflow as tf
+logger = tf.get_logger()
+logger.setLevel(logging.ERROR)
+
 
 class Trainer:
 
     def __init__(self,
                  experiment_dir=Path('experiments/base_model'),
                  ):
+
         self.params = utils.Params(experiment_dir / 'params.json')
+        self.experiment_dir = experiment_dir
 
         # data generators
-        self.train_data_gen, self.val_data_gen = get_generators()
+        self.train_data_gen, self.val_data_gen = get_generators(batch_size=self.params.BATCH_SIZE)
 
         # model
         net = ConvNet()
