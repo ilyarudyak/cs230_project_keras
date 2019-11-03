@@ -18,9 +18,11 @@
       <sourceFolder url="file://$MODULE_DIR$/misc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/model" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/debugging" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial/cats_and_dogs" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.6 (modernpython)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">
