@@ -16,8 +16,7 @@ def get_generators(batch_size):
 
     train_data_gen = tg.flow_from_directory(batch_size=batch_size,
                                             directory=args.train_dir,
-                                            # TODO change to True
-                                            shuffle=False,
+                                            shuffle=True,
                                             target_size=(args.IMG_SHAPE, args.IMG_SHAPE),
                                             class_mode='binary')
 

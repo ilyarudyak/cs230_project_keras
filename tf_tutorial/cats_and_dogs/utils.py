@@ -55,15 +55,15 @@ def load_history(filename):
 def plot_history(filename):
     history_dict = load_history(filename)
 
-    acc = history_dict['accuracy']
-    val_acc = history_dict['val_accuracy']
+    acc = history_dict['acc']
+    val_acc = history_dict['val_acc']
 
     loss = history_dict['loss']
     val_loss = history_dict['val_loss']
 
     epochs_range = range(len(acc))
 
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(15, 5))
     plt.subplot(1, 2, 1)
     plt.plot(epochs_range, acc, label='Training Accuracy')
     plt.plot(epochs_range, val_acc, label='Validation Accuracy')
