@@ -1,0 +1,6 @@
+{
+  "EPOCHS": 100,
+  "BATCH_SIZE": 4,
+  "total_train": 2000,
+  "total_val": 1000
+}
