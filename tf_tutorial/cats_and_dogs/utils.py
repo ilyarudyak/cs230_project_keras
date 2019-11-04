@@ -1,6 +1,8 @@
 import json
 import pickle
 import matplotlib.pyplot as plt
+import tensorflow as tf
+import numpy as np
 
 
 class Params:
@@ -75,4 +77,11 @@ def plot_history(filename):
     plt.plot(epochs_range, val_loss, label='Validation Loss')
     plt.legend(loc='upper right')
     plt.title('Training and Validation Loss')
+
+
+def get_image_net_label(idx):
+    _URL = 'https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt'
+    labels_path = tf.keras.utils.get_file('ImageNetLabels.txt', _URL)
+    imagenet_labels = np.array(open(labels_path).read().splitlines())
+    return imagenet_labels[idx]
 

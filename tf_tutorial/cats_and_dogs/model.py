@@ -1,4 +1,6 @@
 import tensorflow as tf
+import tensorflow_hub as hub
+import tensorflow_datasets as tfds
 
 
 class ConvNet:
@@ -25,6 +27,28 @@ class ConvNet:
             tf.keras.layers.Flatten(),
             tf.keras.layers.Dense(512, activation='relu'),
             tf.keras.layers.Dense(2, activation='softmax')
+        ])
+
+    def get_model(self):
+        return self.model
+
+
+class MobileNetTransf:
+
+    def __init__(self):
+
+        self.config = {
+            'CLASSIFIER_URL': 'https://tfhub.dev/google/tf2-preview/mobilenet_v2/classification/2',
+            'IMAGE_RES': 224
+        }
+
+        self.model = None
+        self.build_model()
+
+    def build_model(self):
+        self.model = tf.keras.models.Sequential([
+            hub.KerasLayer(self.config['CLASSIFIER_URL'],
+                           input_shape=(self.config['IMAGE_RES'], self.config['IMAGE_RES'], 3))
         ])
 
     def get_model(self):
