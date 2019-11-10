@@ -18,8 +18,12 @@
       <sourceFolder url="file://$MODULE_DIR$/misc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/model" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/debugging" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial/cats_and_dogs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial_udacity" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial_udacity/cats_and_dogs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/geron_2ed" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/geron_2ed/ch10_intro_keras" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/geron_2ed/ch10_intro_keras/fashion_mnist" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/geron_2ed/ch13_data_api" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (modernpython)" jdkType="Python SDK" />
