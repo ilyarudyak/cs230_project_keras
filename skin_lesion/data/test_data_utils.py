@@ -1,5 +1,5 @@
 import unittest
-import data_utils
+from data import data_utils
 
 
 class TestDataUtils(unittest.TestCase):
@@ -15,7 +15,7 @@ class TestDataUtils(unittest.TestCase):
         test that we actually copied files specified in our splits.
         """
         for i, split in enumerate(data_utils.args.splits):
-            paths_actual = data_utils.args.dirs[split+'_images'].glob('*')
+            paths_actual = data_utils.args.dirs[split + '_images'].glob('*')
             filenames_actual_sorted = list(map(data_utils.get_filename_from_path, sorted(paths_actual)))
             self.assertEqual(filenames_actual_sorted, self.all_filenames_sorted[i])
 
@@ -24,7 +24,7 @@ class TestDataUtils(unittest.TestCase):
         test that we copied correct number of files.
         """
         for i, split in enumerate(data_utils.args.splits):
-            image_count = len(list(data_utils.args.dirs[split+'_images'].glob('*')))
+            image_count = len(list(data_utils.args.dirs[split + '_images'].glob('*')))
             mask_count = len(list(data_utils.args.dirs[split + '_masks'].glob('*')))
             self.assertEqual(image_count, mask_count)
             self.assertEqual(image_count, self.correct_count[i])
@@ -34,7 +34,7 @@ class TestDataUtils(unittest.TestCase):
         test that we have masks exactly for image files in each split.
         """
         for i, split in enumerate(data_utils.args.splits):
-            paths_images_actual = data_utils.args.dirs[split+'_images'].glob('*')
+            paths_images_actual = data_utils.args.dirs[split + '_images'].glob('*')
             paths_masks_actual = data_utils.args.dirs[split + '_masks'].glob('*')
 
             filenames_images_actual_sorted = list(map(data_utils.get_filename_from_path, sorted(paths_images_actual)))

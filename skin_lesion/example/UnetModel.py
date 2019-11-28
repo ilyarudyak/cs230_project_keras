@@ -39,54 +39,57 @@ layer_norm = True
 
 batch_size = 6
 
-#Enable tensorboard
+# Enable tensorboard
 tensorBoard = TensorBoard(
-    log_dir='./logs', 
-    histogram_freq=0, 
-    batch_size=batch_size, 
-    write_graph=False, 
-    write_grads=False, 
-    write_images=False, 
+    log_dir='./logs',
+    histogram_freq=0,
+    batch_size=batch_size,
+    write_graph=False,
+    write_grads=False,
+    write_images=False,
     embeddings_freq=0)
 
-
 data_gen_args = dict(
-#    samplewise_center = True,
-#    samplewise_std_normalization = True,
+    #    samplewise_center = True,
+    #    samplewise_std_normalization = True,
     rotation_range=180,
     width_shift_range=0.05,
     height_shift_range=0.05,
     shear_range=0.05,
     zoom_range=0.05,
     horizontal_flip=True,
-    vertical_flip = True,
+    vertical_flip=True,
     fill_mode='nearest')
 
-#Validation data generation
+# Validation data generation
 data_val_gen_args = dict(
-    #samplewise_center = True,
-    #samplewise_std_normalization = True
-    )
-      
-        
+    # samplewise_center = True,
+    # samplewise_std_normalization = True
+)
+
+
 class LayerNormalization(Layer):
     def __init__(self, eps=1e-6, **kwargs):
         self.eps = eps
         super(LayerNormalization, self).__init__(**kwargs)
+
     def build(self, input_shape):
         self.gamma = self.add_weight(name='gamma', shape=input_shape[-1:], initializer=Ones(), trainable=True)
         self.beta = self.add_weight(name='beta', shape=input_shape[-1:], initializer=Zeros(), trainable=True)
         super(LayerNormalization, self).build(input_shape)
+
     def call(self, x):
         mean = K.mean(x, axis=-1, keepdims=True)
         std = K.std(x, axis=-1, keepdims=True)
         return self.gamma * (x - mean) / (std + self.eps) + self.beta
+
     def compute_output_shape(self, input_shape):
         return input_shape
 
-    
+
 def conv_block(prevlayer, filters, prefix, strides=(1, 1)):
-    conv = Conv2D(filters, (3, 3), padding="same", kernel_initializer="he_normal", strides=strides, name=prefix + "_conv")(prevlayer)
+    conv = Conv2D(filters, (3, 3), padding="same", kernel_initializer="he_normal", strides=strides,
+                  name=prefix + "_conv")(prevlayer)
     if batch_norm:
         conv = BatchNormalization(name=prefix + "_bn")(conv)
     if layer_norm:
@@ -94,24 +97,27 @@ def conv_block(prevlayer, filters, prefix, strides=(1, 1)):
     conv = LeakyReLU(alpha=0.001, name=prefix + "_activation")(conv)
     return conv
 
+
 def double_block(prevlayer, filters, prefix, strides=(1, 1)):
-    layer1 = conv_block(prevlayer, filters, prefix+"1", strides)
-    layer2 = conv_block(layer1   , filters, prefix+"2", strides)
+    layer1 = conv_block(prevlayer, filters, prefix + "1", strides)
+    layer2 = conv_block(layer1, filters, prefix + "2", strides)
     return layer2
 
-def up_sampling_block(up_sampling_layer, left_skip_layer, filters, prefix, strides = (1,1)):
+
+def up_sampling_block(up_sampling_layer, left_skip_layer, filters, prefix, strides=(1, 1)):
     up_layer = concatenate([UpSampling2D(size=(2, 2))(up_sampling_layer), left_skip_layer], axis=3)
     double_block_layer = double_block(up_layer, filters, prefix, strides)
     return double_block_layer
 
 
-#Define loss function
+# Define loss function
 def jaccard_coef(y_true, y_pred):
     smooth = 1.
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
     intersection = K.sum(y_true_f * y_pred_f)
-    return  (intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) - intersection + smooth)
+    return (intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) - intersection + smooth)
+
 
 def jaccard_coef_loss(y_true, y_pred):
     j = -jaccard_coef(y_true, y_pred)
@@ -122,39 +128,46 @@ def fl_loss(y_true, y_pred):
     epsilon = 0.00001
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
-    j = -K.sum(y_true_f * K.log(y_pred_f + epsilon) + (1 - y_true_f) * K.log(1 - y_pred_f + epsilon)) #/ K.int_shape(y_pred)[0]
-    l = - np.power(1-j, 0.5) * K.log(j + epsilon)
+    j = -K.sum(y_true_f * K.log(y_pred_f + epsilon) + (1 - y_true_f) * K.log(
+        1 - y_pred_f + epsilon))  # / K.int_shape(y_pred)[0]
+    l = - np.power(1 - j, 0.5) * K.log(j + epsilon)
     return j
+
 
 def focal_loss_fixed(y_true, y_pred):
     alpha = 0.25
     gamma = 0.5
     pt_1 = tf.where(tf.equal(y_true, 1), y_pred, tf.ones_like(y_pred))
     pt_0 = tf.where(tf.equal(y_true, 0), y_pred, tf.zeros_like(y_pred))
-    return -K.sum(alpha * K.pow(1. - pt_1, gamma) * K.log(pt_1))-K.sum((1-alpha) * K.pow( pt_0, gamma) * K.log(1. - pt_0))
+    return -K.sum(alpha * K.pow(1. - pt_1, gamma) * K.log(pt_1)) - K.sum(
+        (1 - alpha) * K.pow(pt_0, gamma) * K.log(1. - pt_0))
 
-def normalizeData(img,mask):
+
+def normalizeData(img, mask):
     mean = np.mean(img)  # mean for data centering
     std = np.std(img)  # std for data normalization
     img -= mean
     img /= std
-    mask = mask /255
+    mask = mask / 255
     mask[mask > 0.5] = 1
     mask[mask <= 0.5] = 0
-    return (img,mask)
-def normalizeData_rgb(img,mask):
+    return (img, mask)
+
+
+def normalizeData_rgb(img, mask):
     for i in range(3):
-        mean = np.mean(img[:,:,i])  # mean for data centering
-        std = np.std(img[:,:,i])  # std for data normalization
-        img[:,:,i] -= mean
-        img[:,:,i] /= std
-    mask = mask /255
+        mean = np.mean(img[:, :, i])  # mean for data centering
+        std = np.std(img[:, :, i])  # std for data normalization
+        img[:, :, i] -= mean
+        img[:, :, i] /= std
+    mask = mask / 255
     mask[mask > 0.5] = 1
     mask[mask <= 0.5] = 0
-    return (img,mask)
+    return (img, mask)
+
 
 def UnetModel():
-    inputs = Input((img_rows, img_cols,1))
+    inputs = Input((img_rows, img_cols, 1))
     conv1 = Conv2D(32, (3, 3), activation="relu", padding="same")(inputs)
     conv1 = Conv2D(32, (3, 3), activation="relu", padding="same")(conv1)
     pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
@@ -197,9 +210,10 @@ def UnetModel():
     model.compile(optimizer=Adam(lr=1e-5), loss=jaccard_coef_loss, metrics=[jaccard_coef])
 
     return model
-    
+
+
 def FullUnetModel():
-    inputs = Input((img_rows, img_cols,3))
+    inputs = Input((img_rows, img_cols, 3))
     conv1 = Conv2D(64, (3, 3), activation="relu", padding="same")(inputs)
     conv1 = Conv2D(64, (3, 3), activation="relu", padding="same")(conv1)
     pool1 = MaxPooling2D(pool_size=(2, 2))(conv1)
@@ -243,8 +257,9 @@ def FullUnetModel():
 
     return model
 
+
 def LeakyUnetModel():
-    inputs = Input((img_rows, img_cols,1))
+    inputs = Input((img_rows, img_cols, 1))
     conv1 = Conv2D(32, (3, 3), padding="same")(inputs)
     acti1 = LeakyReLU(alpha=0.001)(conv1)
     conv1 = Conv2D(32, (3, 3), padding="same")(acti1)
@@ -273,7 +288,7 @@ def LeakyUnetModel():
     acti5 = LeakyReLU(alpha=0.001)(conv5)
     conv5 = Conv2D(512, (3, 3), padding="same")(acti5)
     acti5 = LeakyReLU(alpha=0.001)(conv5)
-    
+
     up6 = concatenate([UpSampling2D(size=(2, 2))(acti5), acti4], axis=3)
     conv6 = Conv2D(256, (3, 3), padding="same")(up6)
     acti6 = LeakyReLU(alpha=0.001)(conv6)
@@ -305,10 +320,10 @@ def LeakyUnetModel():
     model.compile(optimizer=Adam(lr=3e-5), loss=jaccard_coef_loss, metrics=[jaccard_coef])
 
     return model
-    
-    
+
+
 def BigLeakyUnetModel():
-    inputs = Input((img_rows, img_cols,3))
+    inputs = Input((img_rows, img_cols, 3))
     conv1 = Conv2D(32, (3, 3), padding="same")(inputs)
     acti1 = LeakyReLU(alpha=0.001)(conv1)
     conv1 = Conv2D(32, (3, 3), padding="same")(acti1)
@@ -343,7 +358,7 @@ def BigLeakyUnetModel():
     acti6 = LeakyReLU(alpha=0.001)(conv6)
     conv6 = Conv2D(1024, (3, 3), padding="same")(acti6)
     acti6 = LeakyReLU(alpha=0.001)(conv6)
-    
+
     right_up1 = concatenate([UpSampling2D(size=(2, 2))(acti6), acti5], axis=3)
     right_conv1 = Conv2D(512, (3, 3), padding="same")(right_up1)
     right_acti1 = LeakyReLU(alpha=0.001)(right_conv1)
@@ -382,8 +397,9 @@ def BigLeakyUnetModel():
 
     return model
 
+
 def BiggerLeakyUnetModel():
-    inputs = Input((img_rows, img_cols,3))
+    inputs = Input((img_rows, img_cols, 3))
     conv1 = Conv2D(32, (3, 3), padding="same")(inputs)
     acti1 = LeakyReLU(alpha=0.001)(conv1)
     conv1 = Conv2D(32, (3, 3), padding="same")(acti1)
@@ -419,7 +435,7 @@ def BiggerLeakyUnetModel():
     conv6 = Conv2D(1024, (3, 3), padding="same")(acti6)
     acti6 = LeakyReLU(alpha=0.001)(conv6)
     pool6 = MaxPooling2D(pool_size=(2, 2))(acti6)
-    
+
     conv7 = Conv2D(2048, (3, 3), padding="same")(pool6)
     acti7 = LeakyReLU(alpha=0.001)(conv7)
     conv7 = Conv2D(2048, (3, 3), padding="same")(acti7)
@@ -468,9 +484,10 @@ def BiggerLeakyUnetModel():
     model.compile(optimizer=Adam(lr=5e-5), loss=jaccard_coef_loss, metrics=[jaccard_coef])
 
     return model
-    
+
+
 def BiggerLeakyUnetModelWithBatchnorm():
-    inputs = Input((img_rows, img_cols,3))
+    inputs = Input((img_rows, img_cols, 3))
     conv1 = Conv2D(32, (3, 3), padding="same")(inputs)
     norm1 = BatchNormalization()(conv1)
     acti1 = LeakyReLU(alpha=0.001)(norm1)
@@ -518,7 +535,7 @@ def BiggerLeakyUnetModelWithBatchnorm():
     norm6 = BatchNormalization()(conv6)
     acti6 = LeakyReLU(alpha=0.001)(norm6)
     pool6 = MaxPooling2D(pool_size=(2, 2))(acti6)
-    
+
     conv7 = Conv2D(2048, (3, 3), padding="same")(pool6)
     norm7 = BatchNormalization()(conv7)
     acti7 = LeakyReLU(alpha=0.001)(norm7)
@@ -584,8 +601,9 @@ def BiggerLeakyUnetModelWithBatchnorm():
 
     return model
 
+
 def BiggerLeakyUnetModelWithLayernorm():
-    inputs = Input((img_rows, img_cols,3))
+    inputs = Input((img_rows, img_cols, 3))
     conv1 = Conv2D(32, (3, 3), padding="same")(inputs)
     norm1 = LayerNormalization()(conv1)
     acti1 = LeakyReLU(alpha=0.001)(norm1)
@@ -633,7 +651,7 @@ def BiggerLeakyUnetModelWithLayernorm():
     norm6 = LayerNormalization()(conv6)
     acti6 = LeakyReLU(alpha=0.001)(norm6)
     pool6 = MaxPooling2D(pool_size=(2, 2))(acti6)
-    
+
     conv7 = Conv2D(2048, (3, 3), padding="same")(pool6)
     norm7 = LayerNormalization()(conv7)
     acti7 = LeakyReLU(alpha=0.001)(norm7)
@@ -698,9 +716,10 @@ def BiggerLeakyUnetModelWithLayernorm():
     model.compile(optimizer=Adam(lr=5e-5), loss=jaccard_coef_loss, metrics=[jaccard_coef])
 
     return model
+
 
 def BiggerLeakyUnetModelWithBatchLayernorm():
-    inputs = Input((img_rows, img_cols,3))
+    inputs = Input((img_rows, img_cols, 3))
     conv1 = Conv2D(32, (3, 3), padding="same")(inputs)
     norm1 = BatchNormalization()(conv1)
     acti1 = LeakyReLU(alpha=0.001)(norm1)
@@ -748,7 +767,7 @@ def BiggerLeakyUnetModelWithBatchLayernorm():
     norm6 = BatchNormalization()(conv6)
     acti6 = LeakyReLU(alpha=0.001)(norm6)
     pool6 = MaxPooling2D(pool_size=(2, 2))(acti6)
-    
+
     conv7 = Conv2D(2048, (3, 3), padding="same")(pool6)
     norm7 = BatchNormalization()(conv7)
     acti7 = LeakyReLU(alpha=0.001)(norm7)
@@ -814,9 +833,21 @@ def BiggerLeakyUnetModelWithBatchLayernorm():
 
     return model
 
-def trainGenerator(batch_size,train_path,image_folder,mask_folder,aug_dict,image_color_mode = "rgb",
-                    mask_color_mode = "grayscale",image_save_prefix  = "image",mask_save_prefix  = "mask",
-                    flag_multi_class = False,num_class = 2,save_to_dir = None,target_size = (224,224),seed = 1):
+
+def trainGenerator(batch_size,  # done
+                   train_path,
+                   image_folder,
+                   mask_folder,
+                   aug_dict,  # done
+                   image_color_mode="rgb",  # done
+                   mask_color_mode="grayscale",  # done
+                   image_save_prefix="image",  # we don't use save_to_dir
+                   mask_save_prefix="mask",  # we don't use save_to_dir
+                   flag_multi_class=False,
+                   num_class=2,
+                   save_to_dir=None,  # default behavior
+                   target_size=(224, 224),  # done
+                   seed=1):  # done
     '''
     can generate image and mask at the same time
     use the same seed for image_datagen and mask_datagen to ensure the transformation for image and mask is the same
@@ -826,33 +857,33 @@ def trainGenerator(batch_size,train_path,image_folder,mask_folder,aug_dict,image
     mask_datagen = ImageDataGenerator(**aug_dict)
     image_generator = image_datagen.flow_from_directory(
         train_path,
-        classes = [image_folder],
-        class_mode = None,
-        color_mode = image_color_mode,
-        target_size = target_size,
-        batch_size = batch_size,
-        save_to_dir = save_to_dir,
-        save_prefix  = image_save_prefix,
-        seed = seed)
+        classes=[image_folder],
+        class_mode=None,
+        color_mode=image_color_mode,
+        target_size=target_size,
+        batch_size=batch_size,
+        save_to_dir=save_to_dir,
+        save_prefix=image_save_prefix,
+        seed=seed)
     mask_generator = mask_datagen.flow_from_directory(
         train_path,
-        classes = [mask_folder],
-        class_mode = None,
-        color_mode = mask_color_mode,
-        target_size = target_size,
-        batch_size = batch_size,
-        save_to_dir = save_to_dir,
-        save_prefix  = mask_save_prefix,
-        seed = seed)
+        classes=[mask_folder],
+        class_mode=None,
+        color_mode=mask_color_mode,
+        target_size=target_size,
+        batch_size=batch_size,
+        save_to_dir=save_to_dir,
+        save_prefix=mask_save_prefix,
+        seed=seed)
     train_generator = zip(image_generator, mask_generator)
-    for (img,mask) in train_generator:
-        img,mask = normalizeData(img,mask)
-        yield (img,mask)
+    for (img, mask) in train_generator:
+        img, mask = normalizeData(img, mask)
+        yield (img, mask)
 
-        
-def validationGenerator(batch_size,train_path,image_folder,mask_folder,aug_dict,image_color_mode = "rgb",
-                    mask_color_mode = "grayscale",image_save_prefix  = "image",mask_save_prefix  = "mask",
-                    flag_multi_class = False,num_class = 2,save_to_dir = None,target_size = (224,224),seed = 1):
+
+def validationGenerator(batch_size, train_path, image_folder, mask_folder, aug_dict, image_color_mode="rgb",
+                        mask_color_mode="grayscale", image_save_prefix="image", mask_save_prefix="mask",
+                        flag_multi_class=False, num_class=2, save_to_dir=None, target_size=(224, 224), seed=1):
     '''
     can generate image and mask at the same time
     use the same seed for image_datagen and mask_datagen to ensure the transformation for image and mask is the same
@@ -862,30 +893,30 @@ def validationGenerator(batch_size,train_path,image_folder,mask_folder,aug_dict,
     mask_datagen = ImageDataGenerator(**aug_dict)
     image_generator = image_datagen.flow_from_directory(
         train_path,
-        classes = [image_folder],
-        class_mode = None,
-        color_mode = image_color_mode,
-        target_size = target_size,
-        batch_size = batch_size,
-        save_to_dir = save_to_dir,
-        save_prefix  = image_save_prefix,
-        seed = seed)
+        classes=[image_folder],
+        class_mode=None,
+        color_mode=image_color_mode,
+        target_size=target_size,
+        batch_size=batch_size,
+        save_to_dir=save_to_dir,
+        save_prefix=image_save_prefix,
+        seed=seed)
     mask_generator = mask_datagen.flow_from_directory(
         train_path,
-        classes = [mask_folder],
-        class_mode = None,
-        color_mode = mask_color_mode,
-        target_size = target_size,
-        batch_size = batch_size,
-        save_to_dir = save_to_dir,
-        save_prefix  = mask_save_prefix,
-        seed = seed)
+        classes=[mask_folder],
+        class_mode=None,
+        color_mode=mask_color_mode,
+        target_size=target_size,
+        batch_size=batch_size,
+        save_to_dir=save_to_dir,
+        save_prefix=mask_save_prefix,
+        seed=seed)
     train_generator = zip(image_generator, mask_generator)
-    for (img,mask) in train_generator:
-        img,mask = normalizeData(img,mask)
-        yield (img,mask)
+    for (img, mask) in train_generator:
+        img, mask = normalizeData(img, mask)
+        yield (img, mask)
 
-        
+
 def plotTrainigGraph(hist):
     # Plot training & validation accuracy values
     plt.plot(hist['jaccard_coef'])
@@ -909,121 +940,126 @@ def plotTrainigGraph(hist):
 
     coef = np.array(hist['jaccard_coef'])
     val_coef = np.array(hist['val_jaccard_coef'])
-    print("Training co-effiency    : {};\nValidation co-effiency : {}".format(coef[coef==max(coef)][0], val_coef[np.argmax(coef)]))
+    print("Training co-effiency    : {};\nValidation co-effiency : {}".format(coef[coef == max(coef)][0],
+                                                                              val_coef[np.argmax(coef)]))
+
 
 def predictTestSet(model, img_rows, img_cols):
     file_names = next(os.walk(test_data_dir))[2]
     scores = []
     for file in file_names:
-        grey_img = load_img(os.path.join(test_data_dir,file), target_size=(img_rows, img_cols), grayscale=False)
-        mask_img = load_img(os.path.join(test_data_mask_dir,file.split('.')[0]+"_segmentation.png"), 
+        grey_img = load_img(os.path.join(test_data_dir, file), target_size=(img_rows, img_cols), grayscale=False)
+        mask_img = load_img(os.path.join(test_data_mask_dir, file.split('.')[0] + "_segmentation.png"),
                             target_size=(img_rows, img_cols), grayscale=True)
         img = img_to_array(grey_img)
         img_mask = img_to_array(mask_img)
 
-        #Preprocess image mask
-        #img_mask = img_mask /255
-        #img_mask[img_mask > 0.5] = 1
-        #img_mask[img_mask <= 0.5] = 0
-        #Preprocess images
-        #mean = np.mean(img)  # mean for data centering
-        #std = np.std(img)  # std for data normalization
-        #img -= mean
-        #img /= std
+        # Preprocess image mask
+        # img_mask = img_mask /255
+        # img_mask[img_mask > 0.5] = 1
+        # img_mask[img_mask <= 0.5] = 0
+        # Preprocess images
+        # mean = np.mean(img)  # mean for data centering
+        # std = np.std(img)  # std for data normalization
+        # img -= mean
+        # img /= std
         img, img_mask = normalizeData(img, img_mask)
-        img = np.reshape(img,(1,)+img.shape)
+        img = np.reshape(img, (1,) + img.shape)
 
         pred = model.predict([img])
         sess = tf.Session()
         score = sess.run(jaccard_coef(img_mask, pred))
-        print("{} -- jaccard index: {}".format(file,score))
-        scores.append([file,score])
+        print("{} -- jaccard index: {}".format(file, score))
+        scores.append([file, score])
 
-        result_img = array_to_img(pred[0] * 255 )
+        result_img = array_to_img(pred[0] * 255)
         result_img.save(os.path.join(test_data_pred_dir, file.split('.')[0] + '_predict.jpg'))
 
     with open("unet_test_result.csv", 'w') as f:
         f.write("filename, jaccard_index\n")
         for i in range(len(scores)):
-        #print(scores[i])
+            # print(scores[i])
             f.write("{},{}\n".format(scores[i][0], scores[i][1]))
+
 
 def predictValidationSet(model, img_rows, img_cols):
     file_names = next(os.walk(test_data_dir))[2]
     scores = []
     for file in file_names:
-        grey_img = load_img(os.path.join(val_data_dir,file), target_size=(img_rows, img_cols), grayscale=False)
-        mask_img = load_img(os.path.join(val_data_mask_dir,file.split('.')[0]+"_segmentation.png"), 
+        grey_img = load_img(os.path.join(val_data_dir, file), target_size=(img_rows, img_cols), grayscale=False)
+        mask_img = load_img(os.path.join(val_data_mask_dir, file.split('.')[0] + "_segmentation.png"),
                             target_size=(img_rows, img_cols), grayscale=True)
         img = img_to_array(grey_img)
         img_mask = img_to_array(mask_img)
 
-        #Preprocess image mask
-        #img_mask = img_mask /255
-        #img_mask[img_mask > 0.5] = 1
-        #img_mask[img_mask <= 0.5] = 0
-        #Preprocess images
-        #mean = np.mean(img)  # mean for data centering
-        #std = np.std(img)  # std for data normalization
-        #img -= mean
-        #img /= std
+        # Preprocess image mask
+        # img_mask = img_mask /255
+        # img_mask[img_mask > 0.5] = 1
+        # img_mask[img_mask <= 0.5] = 0
+        # Preprocess images
+        # mean = np.mean(img)  # mean for data centering
+        # std = np.std(img)  # std for data normalization
+        # img -= mean
+        # img /= std
         img, img_mask = normalizeData(img, img_mask)
-        img = np.reshape(img,(1,)+img.shape)
+        img = np.reshape(img, (1,) + img.shape)
 
         pred = model.predict([img])
         sess = tf.Session()
         score = sess.run(jaccard_coef(img_mask, pred))
-        print("{} -- jaccard index: {}".format(file,score))
-        scores.append([file,score])
+        print("{} -- jaccard index: {}".format(file, score))
+        scores.append([file, score])
 
-        #result_img = array_to_img(pred[0] * 255 )
-        #result_img.save(os.path.join(test_data_pred_dir, file.split('.')[0] + '_predict.jpg'))
+        # result_img = array_to_img(pred[0] * 255 )
+        # result_img.save(os.path.join(test_data_pred_dir, file.split('.')[0] + '_predict.jpg'))
 
     with open("report_valiate_result.csv", 'w') as f:
         f.write("filename, jaccard_index\n")
         for i in range(len(scores)):
-        #print(scores[i])
+            # print(scores[i])
             f.write("{},{}\n".format(scores[i][0], scores[i][1]))
 
+
 def showPredictResult(file, model, img_rows, img_cols):
-    #file = 'data/train/images/ISIC_0000000.jpg'
-    grey_img = load_img(os.path.join(test_data_dir,file), target_size=(img_rows, img_cols), grayscale=False)
-    mask_img = load_img(os.path.join(test_data_mask_dir,file.split('.')[0]+"_segmentation.png"), 
+    # file = 'data/train/images/ISIC_0000000.jpg'
+    grey_img = load_img(os.path.join(test_data_dir, file), target_size=(img_rows, img_cols), grayscale=False)
+    mask_img = load_img(os.path.join(test_data_mask_dir, file.split('.')[0] + "_segmentation.png"),
                         target_size=(img_rows, img_cols), grayscale=True)
-    #grey_img = load_img(file, target_size=(img_rows, img_cols), grayscale=False)
-    #mask_img = load_img('data/train/masks/ISIC_0000000_segmentation.png', target_size=(img_rows, img_cols), grayscale=True)
+    # grey_img = load_img(file, target_size=(img_rows, img_cols), grayscale=False)
+    # mask_img = load_img('data/train/masks/ISIC_0000000_segmentation.png', target_size=(img_rows, img_cols), grayscale=True)
 
     img = img_to_array(grey_img)
     img_mask = img_to_array(mask_img)
 
     img, img_mask = normalizeData(img, img_mask)
-    img = np.reshape(img,(1,)+img.shape)
+    img = np.reshape(img, (1,) + img.shape)
 
     pred = model.predict([img])
     sess = tf.Session()
     score = sess.run(jaccard_coef(img_mask, pred))
-    print("{} -- jaccard index: {}".format(file,score))
+    print("{} -- jaccard index: {}".format(file, score))
 
-    result_img = array_to_img(pred[0] * 255 )
+    result_img = array_to_img(pred[0] * 255)
 
-    f, ax = plt.subplots(1,2, figsize = (50,50))
-    ax[0].imshow(grey_img) 
+    f, ax = plt.subplots(1, 2, figsize=(50, 50))
+    ax[0].imshow(grey_img)
     ax[0].axis('off')
     ax[0].set_title('image')
     ax[1].imshow(result_img)
     ax[1].axis('off')
     ax[1].set_title('mask')
     plt.show()
-    
 
-#Create folder for models
+
+# Create folder for models
 date_object = datetime.now()
 # convert object to the format we want
 formatted_date = date_object.strftime('%Y%m%d')
 output_dir = 'unet/{}'.format(formatted_date)
-os.makedirs(output_dir, exist_ok =True)
+os.makedirs(output_dir, exist_ok=True)
 
-#Setup Checkpoint to only capture best estimate
-model_checkpoint = ModelCheckpoint('{}/unet_lesion_{}_{{epoch:03d}}-{{val_jaccard_coef:.5f}}.hdf5'.format(output_dir, formatted_date)
-                                   , monitor='val_jaccard_coef'
-                                   ,verbose=1, mode='max', save_best_only=True)
+# Setup Checkpoint to only capture best estimate
+model_checkpoint = ModelCheckpoint(
+    '{}/unet_lesion_{}_{{epoch:03d}}-{{val_jaccard_coef:.5f}}.hdf5'.format(output_dir, formatted_date)
+    , monitor='val_jaccard_coef'
+    , verbose=1, mode='max', save_best_only=True)
