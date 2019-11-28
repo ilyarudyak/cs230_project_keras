@@ -1,4 +1,6 @@
 import json
+import tensorflow.keras.backend as K
+import pickle
 
 
 class Params:
@@ -31,3 +33,31 @@ class Params:
     def dict(self):
         """Gives dict-like access to Params instance by `params.dict['learning_rate']"""
         return self.__dict__
+
+
+# Define loss function
+def jaccard_coef(y_true, y_pred):
+    smooth = 1.
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    return (intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) - intersection + smooth)
+
+
+def jaccard_coef_loss(y_true, y_pred):
+    j = -jaccard_coef(y_true, y_pred)
+    return j
+
+
+def save_history(history, trainer, param_name=None):
+
+    if param_name:
+        param = trainer.params.dict[param_name]
+        filename = trainer.experiment_dir / f'history_{param_name}_{param}.pickle'
+    else:
+        filename = trainer.experiment_dir / 'history.pickle'
+    with open(filename, 'wb') as f:
+        pickle.dump(history.history, f)
+
+
+

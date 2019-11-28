@@ -15,9 +15,10 @@ class VanillaUnet:
         self.input_shape = params.input_shape
 
         self.model = None
-        self._build_model()
 
     def get_model(self):
+        if self.model is None:
+            self._build_model()
         return self.model
 
     def _build_model(self):
