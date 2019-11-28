@@ -13,18 +13,22 @@
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/example_alexklibisz/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/example_alexklibisz/src/models" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/example_alexklibisz/src/utils" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ultrasound_nerve" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/ultrasound_nerve/example_jocicmarko" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/ultrasound_nerve" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/ultrasound_nerve/example_jocicmarko" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/misc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/model" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/isbi_challenge/debugging" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial_udacity" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial_udacity/cats_and_dogs" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/geron_2ed" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/geron_2ed/ch10_intro_keras" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/geron_2ed/ch10_intro_keras/fashion_mnist" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/geron_2ed/ch13_data_api" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/tf_tutorial_udacity/flowers" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/tf_tutorial_udacity" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/tf_tutorial_udacity/cats_and_dogs" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/geron_2ed" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/geron_2ed/ch10_intro_keras" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/geron_2ed/ch10_intro_keras/fashion_mnist" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/geron_2ed/ch13_data_api" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc/tf_tutorial_udacity/flowers" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/_misc" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/skin_lesion" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/skin_lesion/data" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/skin_lesion/model" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.6 (modernpython)" jdkType="Python SDK" />
