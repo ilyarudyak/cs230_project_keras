@@ -85,7 +85,6 @@ class Trainer:
 
 if __name__ == '__main__':
     tf.keras.backend.clear_session()
-    tf.reset_default_graph()
     trainer = Trainer(experiment_dir=Path('experiments/bigger_leaky_unet'),
                       NetClass=BiggerLeakyUnet)
     history = trainer.train()
