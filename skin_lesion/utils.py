@@ -60,4 +60,10 @@ def save_history(history, trainer, param_name=None):
         pickle.dump(history.history, f)
 
 
+def load_history(filename):
+    with open(filename, "rb") as f:
+        history = pickle.load(f)
+    return history
+
+
 

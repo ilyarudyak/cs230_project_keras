@@ -11,7 +11,7 @@ class Trainer:
     def __init__(self,
                  params=None,
                  experiment_dir=Path('experiments/full_unet'),
-                 NetClass=None,
+                 net_class=None,
                  ):
 
         # parameters
@@ -21,7 +21,7 @@ class Trainer:
             self.params = utils.Params(experiment_dir / 'params.json')
 
         # net and model
-        self.net = NetClass(params=self.params)
+        self.net = net_class(params=self.params)
         self.model = self.net.get_model()
 
         # directories and files
@@ -68,6 +68,8 @@ class Trainer:
 
     def train(self, load_weights=False):
 
+        tf.keras.backend.clear_session()
+
         if load_weights:
             self.model.load_weights(self.weight_file)
 
@@ -77,15 +79,36 @@ class Trainer:
                                            validation_data=self.val_gen,
                                            validation_steps=self.params.num_val//self.params.batch_size,
                                            callbacks=self.callbacks)
+        utils.save_history(history, self)
         return history
 
     def predict(self, weight_file):
         pass
 
 
+class Tuner:
+
+    def __init__(self, params, net_class):
+
+        self.params = params
+        self.net_class = net_class
+        self.trainer = None
+
+    def tune_lr(self, rates=(1e-1, 1e-2, 1e-3, 1e-4, 1e-5)):
+        for lr in rates:
+            print(f'============== lr: {lr} ==============')
+            self.params.learning_rate = lr
+            self.trainer = Trainer(params=self.params,
+                                   net_class=self.net_class)
+            history = self.trainer.train()
+            utils.save_history(history, self.trainer, param_name='learning_rate')
+
+
 if __name__ == '__main__':
-    tf.keras.backend.clear_session()
-    trainer = Trainer(experiment_dir=Path('experiments/bigger_leaky_unet'),
-                      NetClass=BiggerLeakyUnet)
-    history = trainer.train()
-    utils.save_history(history, trainer)
+    # trainer = Trainer(experiment_dir=Path('experiments/bigger_leaky_unet'),
+    #                   net_class=BiggerLeakyUnet)
+    # history = trainer.train()
+
+    params = utils.Params(Path('experiments/bigger_leaky_unet/params.json'))
+    tuner = Tuner(params=params, net_class=BiggerLeakyUnet)
+    tuner.tune_lr()
