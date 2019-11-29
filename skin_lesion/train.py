@@ -2,14 +2,16 @@ import tensorflow as tf
 from pathlib import Path
 import utils
 from data.data_gen import SkinLesionDataGen
-from model.unet import VanillaUnet
+from model.full_unet import FullUnet
+from model.bigger_leaky_unet import BiggerLeakyUnet
 
 
 class Trainer:
 
     def __init__(self,
                  params=None,
-                 experiment_dir=Path('experiments/base_model')
+                 experiment_dir=Path('experiments/full_unet'),
+                 NetClass=None
                  ):
 
         # parameters
@@ -19,7 +21,7 @@ class Trainer:
             self.params = utils.Params(experiment_dir / 'params.json')
 
         # net and model
-        self.net = VanillaUnet(params=self.params)
+        self.net = NetClass(params=self.params)
         self.model = self.net.get_model()
 
         # directories and files
@@ -82,6 +84,6 @@ class Trainer:
 
 
 if __name__ == '__main__':
-    trainer = Trainer()
+    trainer = Trainer(NetClass=BiggerLeakyUnet)
     history = trainer.train()
     utils.save_history(history, trainer)

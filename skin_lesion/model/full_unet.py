@@ -2,7 +2,7 @@ import tensorflow as tf
 from utils import Params
 
 
-class VanillaUnet:
+class FullUnet:
     """
     This model has the shape specified in the original paper,
     uses UpSampling2D (not Conv2DTranspose) and relu activation
@@ -64,7 +64,7 @@ class VanillaUnet:
 
 
 if __name__ == '__main__':
-    params = Params('../experiments/base_model/params.json')
-    net = VanillaUnet(params=params)
+    params = Params('../experiments/full_unet/params.json')
+    net = FullUnet(params=params)
     model = net.get_model()
     model.summary()
