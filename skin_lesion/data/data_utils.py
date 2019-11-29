@@ -6,6 +6,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import shutil
 import pathlib
+import os
 
 data_dir = pathlib.Path.home() / 'data/isic_2018'
 args = Namespace(
@@ -57,6 +58,10 @@ def copy_files(image_dir=args.image_dir):
     Copy files from common images and masks folders
     into directories specified in args.dirs.
     """
+    for dir_name in args.dirs.values():
+        if not os.path.exists(dir_name):
+            os.makedirs(dir_name)
+
     all_paths = get_split_filenames(image_dir)
     for paths, split in zip(all_paths, args.splits):
         copy_files_split(paths=paths, split=split)
@@ -95,6 +100,7 @@ def get_image_filename_from_mask_path(path):
 
 
 if __name__ == '__main__':
+
     copy_files()
 
 
