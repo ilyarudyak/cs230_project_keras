@@ -1,9 +1,13 @@
 {
   "learning_rate": 1e-4,
-  "batch_size": 8,
+  "batch_size": 16,
   "epochs": 2,
   "input_shape": [224, 224, 3],
   "target_size": [224, 224],
+
+  "num_train": 1556,
+  "num_val": 519,
+  "num_test": 519,
 
   "steps_per_epoch": 1000,
   "validation_steps": 260,

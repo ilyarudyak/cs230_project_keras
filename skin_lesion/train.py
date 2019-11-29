@@ -70,10 +70,10 @@ class Trainer:
             self.model.load_weights(self.weight_file)
 
         history = self.model.fit_generator(generator=self.train_gen,
-                                           steps_per_epoch=self.params.steps_per_epoch,
+                                           steps_per_epoch=self.params.num_train//self.params.batch_size,
                                            epochs=self.params.epochs,
                                            validation_data=self.val_gen,
-                                           validation_steps=self.params.validation_steps,
+                                           validation_steps=self.params.num_val//self.params.batch_size,
                                            callbacks=self.callbacks)
         return history
 
