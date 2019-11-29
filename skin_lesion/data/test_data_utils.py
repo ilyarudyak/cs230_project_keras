@@ -1,5 +1,5 @@
 import unittest
-from data import data_utils
+import data_utils
 
 
 class TestDataUtils(unittest.TestCase):
