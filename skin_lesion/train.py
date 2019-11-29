@@ -11,7 +11,11 @@ class Trainer:
     def __init__(self,
                  params=None,
                  experiment_dir=Path('experiments/full_unet'),
-                 NetClass=None
+                 NetClass=None,
+
+                 swap_gen=True,
+                 train_gen=None,
+                 val_gen=None,
                  ):
 
         # parameters
@@ -30,9 +34,13 @@ class Trainer:
         self.weight_file = self.experiment_dir / 'weights'
 
         # data generators
-        self.data_gen = SkinLesionDataGen(params=self.params)
-        self.train_gen = self.data_gen.get_train_gen()
-        self.val_gen = self.data_gen.get_val_gen()
+        if swap_gen:
+            self.train_gen = train_gen
+            self.val_gen = val_gen
+        else:
+            self.data_gen = SkinLesionDataGen(params=self.params)
+            self.train_gen = self.data_gen.get_train_gen()
+            self.val_gen = self.data_gen.get_val_gen()
 
         # optimizer
         self.optimizer = tf.keras.optimizers.Adam(lr=self.params.learning_rate)
@@ -57,7 +65,7 @@ class Trainer:
                                                  factor=0.75,
                                                  patience=5,
                                                  cooldown=3,
-                                                 min_lr=1e-5,
+                                                 min_lr=1e-6,
                                                  verbose=1),
             tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                              min_delta=1e-3,
@@ -84,6 +92,7 @@ class Trainer:
 
 
 if __name__ == '__main__':
-    trainer = Trainer(NetClass=BiggerLeakyUnet)
+    trainer = Trainer(experiment_dir=Path('experiments/bigger_leaky_unet'),
+                      NetClass=BiggerLeakyUnet)
     history = trainer.train()
     utils.save_history(history, trainer)

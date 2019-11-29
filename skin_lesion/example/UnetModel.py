@@ -37,7 +37,7 @@ img_cols = 256
 batch_norm = False
 layer_norm = True
 
-batch_size = 6
+batch_size = 2
 
 # Enable tensorboard
 tensorBoard = TensorBoard(
@@ -848,11 +848,11 @@ def trainGenerator(batch_size,  # done
                    save_to_dir=None,  # default behavior
                    target_size=(224, 224),  # done
                    seed=1):  # done
-    '''
+    """
     can generate image and mask at the same time
     use the same seed for image_datagen and mask_datagen to ensure the transformation for image and mask is the same
     if you want to visualize the results of generator, set save_to_dir = "your path"
-    '''
+    """
     image_datagen = ImageDataGenerator(**aug_dict)
     mask_datagen = ImageDataGenerator(**aug_dict)
     image_generator = image_datagen.flow_from_directory(
