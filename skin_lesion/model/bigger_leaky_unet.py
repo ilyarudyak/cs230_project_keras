@@ -8,9 +8,11 @@ class BiggerLeakyUnet:
     """
 
     def __init__(self,
-                 params):
+                 params,
+                 set_seed=False):
         self.params = params
         self.input_shape = params.input_shape
+        self.set_seed = set_seed
 
         self.model = None
 
@@ -20,6 +22,9 @@ class BiggerLeakyUnet:
         return self.model
 
     def _build_model(self):
+
+        if self.set_seed:
+            tf.random.set_seed(self.params.seed)
 
         inputs = tf.keras.layers.Input(self.input_shape)
         conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same")(inputs)

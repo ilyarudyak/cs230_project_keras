@@ -76,9 +76,19 @@ def plot_metric(metric, dir_path):
     plt.title(metric)
 
 
+def plot_metric_paths(metric, paths):
+    for path in paths:
+        history = load_history(path)
+        param = get_param(path)
+        plt.plot(history[metric], label=f'{param}')
+    plt.legend()
+    plt.title(metric)
+
+
 def get_param(path):
     filename = str(path)
-    return filename.split('_')[-1][:-7]
+    param = float(filename.split('_')[-1][:-7])
+    return f'{param:.7}'
 
 
 
