@@ -93,7 +93,7 @@ class Tuner:
         self.net_class = net_class
         self.trainer = None
 
-    def tune_lr(self, rates=(1e-1, 1e-2, 1e-3, 1e-4, 1e-5)):
+    def tune_lr(self, rates=(3*1e-5, .7*1e-5, .5*1e-5)):
         for lr in rates:
             print(f'============== lr: {lr} ==============')
             self.params.learning_rate = lr
