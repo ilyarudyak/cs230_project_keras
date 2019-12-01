@@ -12,7 +12,10 @@ class Trainer:
                  params=None,
                  experiment_dir=Path('experiments/bigger_leaky_unet'),
                  net_class=None,
+                 set_seed=False
                  ):
+
+        tf.keras.backend.clear_session()
 
         # parameters
         if params:
@@ -21,7 +24,7 @@ class Trainer:
             self.params = utils.Params(experiment_dir / 'params.json')
 
         # net and model
-        self.net = net_class(params=self.params)
+        self.net = net_class(params=self.params, set_seed=set_seed)
         self.model = self.net.get_model()
 
         # directories and files
@@ -67,8 +70,6 @@ class Trainer:
 
     def train(self, load_weights=False):
 
-        tf.keras.backend.clear_session()
-
         if load_weights:
             self.model.load_weights(self.weight_file)
 
@@ -87,18 +88,21 @@ class Trainer:
 
 class Tuner:
 
-    def __init__(self, params, net_class):
+    def __init__(self, params, net_class, set_seed=False):
 
         self.params = params
         self.net_class = net_class
+        self.set_seed = set_seed
         self.trainer = None
 
     def tune_lr(self, rates=(3*1e-5, .7*1e-5, .5*1e-5)):
         for lr in rates:
             print(f'============== lr: {lr} ==============')
+
             self.params.learning_rate = lr
             self.trainer = Trainer(params=self.params,
-                                   net_class=self.net_class)
+                                   net_class=self.net_class,
+                                   set_seed=self.set_seed)
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='learning_rate')
 
@@ -107,7 +111,8 @@ class Tuner:
             print(f'============== bs: {bs} ==============')
             self.params.batch_size = bs
             self.trainer = Trainer(params=self.params,
-                                   net_class=self.net_class)
+                                   net_class=self.net_class,
+                                   set_seed=self.set_seed)
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='batch_size')
 
@@ -118,5 +123,5 @@ if __name__ == '__main__':
     # history = trainer.train()
 
     params = utils.Params(Path('experiments/bigger_leaky_unet/params.json'))
-    tuner = Tuner(params=params, net_class=BiggerLeakyUnet)
-    tuner.tune_batch_size()
+    tuner = Tuner(params=params, net_class=BiggerLeakyUnet, set_seed=True)
+    tuner.tune_batch_size(batch_sizes=(2, 4, 8))
