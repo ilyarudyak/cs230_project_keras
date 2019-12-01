@@ -10,7 +10,7 @@ class Trainer:
 
     def __init__(self,
                  params=None,
-                 experiment_dir=Path('experiments/full_unet'),
+                 experiment_dir=Path('experiments/bigger_leaky_unet'),
                  net_class=None,
                  ):
 
@@ -56,12 +56,11 @@ class Trainer:
             tf.keras.callbacks.ReduceLROnPlateau(monitor='val_loss',
                                                  factor=0.75,
                                                  patience=5,
-                                                 cooldown=3,
                                                  min_lr=1e-6,
                                                  verbose=1),
             tf.keras.callbacks.EarlyStopping(monitor='val_loss',
                                              min_delta=1e-3,
-                                             patience=20,
+                                             patience=15,
                                              mode='min',
                                              verbose=1)
         ]

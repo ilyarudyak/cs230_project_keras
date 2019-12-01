@@ -1,6 +1,7 @@
 import json
 import tensorflow.keras.backend as K
 import pickle
+import matplotlib.pyplot as plt
 
 
 class Params:
@@ -64,6 +65,20 @@ def load_history(filename):
     with open(filename, "rb") as f:
         history = pickle.load(f)
     return history
+
+
+def plot_metric(metric, dir_path):
+    for path in dir_path.glob('hist*'):
+        history = load_history(path)
+        param = get_param(path)
+        plt.plot(history[metric], label=f'{param}')
+    plt.legend()
+    plt.title(metric)
+
+
+def get_param(path):
+    filename = str(path)
+    return filename.split('_')[-1][:-7]
 
 
 
