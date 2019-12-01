@@ -102,6 +102,15 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='learning_rate')
 
+    def tune_batch_size(self, batch_sizes=(2, 4, 8, 16, 32)):
+        for bs in batch_sizes:
+            print(f'============== bs: {bs} ==============')
+            self.params.batch_size = bs
+            self.trainer = Trainer(params=self.params,
+                                   net_class=self.net_class)
+            history = self.trainer.train()
+            utils.save_history(history, self.trainer, param_name='batch_size')
+
 
 if __name__ == '__main__':
     # trainer = Trainer(experiment_dir=Path('experiments/bigger_leaky_unet'),
