@@ -119,4 +119,4 @@ if __name__ == '__main__':
 
     params = utils.Params(Path('experiments/bigger_leaky_unet/params.json'))
     tuner = Tuner(params=params, net_class=BiggerLeakyUnet)
-    tuner.tune_lr()
+    tuner.tune_batch_size()
