@@ -2,6 +2,7 @@ import json
 import tensorflow.keras.backend as K
 import pickle
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Params:
@@ -82,6 +83,8 @@ def plot_metric_paths(metric, paths):
         param = get_param(path)
         n = len(history[metric])
         plt.plot(list(range(n)), history[metric], label=f'{param:.1e}')
+    n = len(load_history(paths[0])[metric])
+    plt.xticks(np.arange(1, n+1, 1))
     plt.legend()
     plt.title(metric)
 
