@@ -95,10 +95,15 @@ class Trainer:
 
 class Tuner:
 
-    def __init__(self, params, net_class, set_seed=False):
+    def __init__(self,
+                 params,
+                 net_class,
+                 experiment_dir,
+                 set_seed=False):
 
         self.params = params
         self.net_class = net_class
+        self.experiment_dir = experiment_dir
         self.set_seed = set_seed
         self.trainer = None
 
@@ -109,6 +114,7 @@ class Tuner:
             self.params.learning_rate = lr
             self.trainer = Trainer(params=self.params,
                                    net_class=self.net_class,
+                                   experiment_dir=self.experiment_dir,
                                    set_seed=self.set_seed)
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='learning_rate')
@@ -119,6 +125,7 @@ class Tuner:
             self.params.batch_size = bs
             self.trainer = Trainer(params=self.params,
                                    net_class=self.net_class,
+                                   experiment_dir=self.experiment_dir,
                                    set_seed=self.set_seed)
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='batch_size')
@@ -131,5 +138,8 @@ if __name__ == '__main__':
 
     experiment_dir = Path('experiments/bigger_leaky_unet_toy')
     params = utils.Params(experiment_dir / 'params.json')
-    tuner = Tuner(params=params, net_class=BiggerLeakyUnet, set_seed=True)
+    tuner = Tuner(params=params,
+                  net_class=BiggerLeakyUnet,
+                  experiment_dir=experiment_dir,
+                  set_seed=True)
     tuner.tune_lr()
