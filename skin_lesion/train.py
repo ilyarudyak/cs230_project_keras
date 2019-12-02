@@ -12,7 +12,8 @@ class Trainer:
                  params=None,
                  experiment_dir=Path('experiments/bigger_leaky_unet'),
                  net_class=None,
-                 set_seed=False
+                 set_seed=False,
+                 is_toy=False
                  ):
 
         tf.keras.backend.clear_session()
@@ -28,12 +29,18 @@ class Trainer:
         self.model = self.net.get_model()
 
         # directories and files
-        self.data_dir = Path.home() / 'data/isic_2018'
+        self.is_toy = is_toy
+        if not is_toy:
+            self.data_dir = Path.home() / 'data/isic_2018'
+        else:
+            self.data_dir = Path.home() / 'data/isic_2018/toy'
+
         self.experiment_dir = experiment_dir
         self.weight_file = self.experiment_dir / 'weights'
 
         # data generators
-        self.data_gen = SkinLesionDataGen(params=self.params)
+        self.data_gen = SkinLesionDataGen(params=self.params,
+                                          data_dir=self.data_dir)
         self.train_gen = self.data_gen.get_train_gen()
         self.val_gen = self.data_gen.get_val_gen()
 

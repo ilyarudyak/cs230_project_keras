@@ -10,8 +10,7 @@ class SkinLesionDataGen:
                  mask_color_mode='grayscale',
                  image_classes=('images',),
                  mask_classes=('masks',),
-                 train_dir=Path.home() / 'data/isic_2018/train',
-                 val_dir=Path.home() / 'data/isic_2018/val'
+                 data_dir=Path.home() / 'data/isic_2018',
                  ):
         self.params = params
         self.batch_size = self.params.batch_size
@@ -41,8 +40,8 @@ class SkinLesionDataGen:
         self.image_classes = list(image_classes)
         self.mask_classes = list(mask_classes)
 
-        self.train_dir = train_dir
-        self.val_dir = val_dir
+        self.train_dir = data_dir / 'train'
+        self.val_dir = data_dir / 'val'
 
         self.train_gen = None
         self.val_gen = None
