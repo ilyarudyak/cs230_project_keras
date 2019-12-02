@@ -95,7 +95,7 @@ class Tuner:
         self.set_seed = set_seed
         self.trainer = None
 
-    def tune_lr(self, rates=(3*1e-5, .7*1e-5, .5*1e-5)):
+    def tune_lr(self, rates=(1e-3, 1e-4, 1e-5, 1e-6)):
         for lr in rates:
             print(f'============== lr: {lr} ==============')
 
@@ -122,6 +122,7 @@ if __name__ == '__main__':
     #                   net_class=BiggerLeakyUnet)
     # history = trainer.train()
 
-    params = utils.Params(Path('experiments/bigger_leaky_unet/params.json'))
+    experiment_dir = Path('experiments/bigger_leaky_unet_toy')
+    params = utils.Params(experiment_dir / 'params.json')
     tuner = Tuner(params=params, net_class=BiggerLeakyUnet, set_seed=True)
-    tuner.tune_batch_size(batch_sizes=(2, 4, 8))
+    tuner.tune_lr()
