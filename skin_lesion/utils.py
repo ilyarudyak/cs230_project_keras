@@ -80,7 +80,8 @@ def plot_metric_paths(metric, paths):
     for path in paths:
         history = load_history(path)
         param = get_param(path)
-        plt.plot(history[metric], label=f'{param:.1e}')
+        n = len(history[metric])
+        plt.plot(list(range(n)), history[metric], label=f'{param:.1e}')
     plt.legend()
     plt.title(metric)
 
