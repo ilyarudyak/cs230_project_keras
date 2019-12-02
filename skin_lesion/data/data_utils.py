@@ -125,6 +125,6 @@ def copy_toy_files(files_ratio=.1):
 
 
 if __name__ == '__main__':
-    # copy_files()
-    copy_toy_files()
+    copy_files()
+    # copy_toy_files()
 
