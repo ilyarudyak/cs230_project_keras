@@ -147,4 +147,4 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_lr()
+    tuner.tune_batch_size()
