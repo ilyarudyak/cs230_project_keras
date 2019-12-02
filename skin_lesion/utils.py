@@ -88,7 +88,7 @@ def plot_metric_paths(metric, paths):
 def get_param(path):
     filename = str(path)
     param = float(filename.split('_')[-1][:-7])
-    return f'{param:.2e}'
+    return f'{param:.2E}'
 
 
 
