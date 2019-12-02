@@ -77,14 +77,14 @@ def plot_metric(metric, dir_path):
     plt.title(metric)
 
 
-def plot_metric_paths(metric, paths):
+def plot_metric_paths(metric, paths, m=2):
     for path in paths:
         history = load_history(path)
         param = get_param(path)
         n = len(history[metric])
         plt.plot(list(range(n)), history[metric], label=f'{param:.1e}')
     n = len(load_history(paths[0])[metric])
-    plt.xticks(np.arange(1, n+1, 1))
+    plt.xticks(np.arange(0, n, m))
     plt.legend()
     plt.title(metric)
 
