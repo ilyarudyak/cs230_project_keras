@@ -80,7 +80,7 @@ def plot_metric_paths(metric, paths):
     for path in paths:
         history = load_history(path)
         param = get_param(path)
-        plt.plot(history[metric], label=f'{param}')
+        plt.plot(history[metric], label=f'{param:.1e}')
     plt.legend()
     plt.title(metric)
 
@@ -88,7 +88,7 @@ def plot_metric_paths(metric, paths):
 def get_param(path):
     filename = str(path)
     param = float(filename.split('_')[-1][:-7])
-    return f'{param:.2E}'
+    return param
 
 
 
