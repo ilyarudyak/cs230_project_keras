@@ -20,13 +20,12 @@ args = Namespace(
         'test_images': data_dir / 'test/images',
         'test_masks': data_dir / 'test/masks',
     },
-    splits=['train', 'val', 'test']
+    splits=['train', 'val', 'test'],
+    data_dir_toy=data_dir / 'toy'
 )
 
 
-#######################################################
 ##################### show images #####################
-#######################################################
 
 
 def show_images_from_path(image_dir=args.image_dir, m=4, n=4):
@@ -49,9 +48,7 @@ def plot_images(paths, m, n):
             ax[i, j].axis('off')
 
 
-#######################################################
 ##################### copy files ######################
-#######################################################
 
 def copy_files(image_dir=args.image_dir):
     """
@@ -98,10 +95,36 @@ def get_filename_from_path(path):
 def get_image_filename_from_mask_path(path):
     return str(path).split('/')[-1][:12] + '.jpg'
 
+##################### copy files ######################
+
+
+def create_toy_dirs():
+    for dir_name in args.dirs.values():
+        toy_dir_name = get_toy_dir_name(dir_name)
+        if not os.path.exists(toy_dir_name):
+            print(toy_dir_name)
+            os.makedirs(toy_dir_name)
+
+
+def get_toy_dir_name(dir_name):
+    s = str(dir_name).split('/')
+    return args.data_dir_toy / '/'.join(s[-2:])
+
+
+def copy_toy_files(files_ratio=.1):
+
+    create_toy_dirs()
+
+    for dir_name in args.dirs.values():
+        toy_dir_name = get_toy_dir_name(dir_name)
+        paths = np.array(sorted(list(dir_name.glob('*'))))
+        n = int(len(paths) * files_ratio)
+        print(f'toy_dir_name:{toy_dir_name} num_files={n}')
+        for image_path in paths[:n]:
+            shutil.copy(image_path, toy_dir_name)
+
 
 if __name__ == '__main__':
-
-    copy_files()
-
-
+    # copy_files()
+    copy_toy_files()
 
