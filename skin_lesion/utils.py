@@ -77,27 +77,31 @@ def plot_metric(metric, dir_path):
     plt.title(metric)
 
 
-def plot_metric_paths(metric, paths, x_axis_step=2, scientific=True):
+def plot_metric_paths(metric, paths, x_axis_step=2, param_name=None):
     for path in paths:
         history = load_history(path)
-        plt.plot(history[metric], label=get_param(path, scientific=scientific))
+        plt.plot(history[metric], label=get_param(path, param_name=param_name))
     n = len(load_history(paths[0])[metric])
     plt.xticks(np.arange(0, n, x_axis_step))
     plt.legend()
     plt.title(metric)
 
 
-def get_param(path, scientific=True):
-    filename = str(path)
-    try:
-        param = float(filename.split('_')[-1][:-7])
-    except ValueError:
-        return filename.split('_')[-2] + '_' + filename.split('_')[-1][:-7]
+def get_param(path, param_name=None):
 
-    if scientific:
+    filename = str(path)
+
+    if param_name in ['learning_rate']:
+        param = float(filename.split('_')[-1][:-7])
         param_str = f'{param:.1e}'
+    elif param_name == 'alpha':
+        param_str = filename.split('_')[-1][:-7]
+    elif param_name == 'batch_size':
+        param_str = filename.split('_')[-1][:-7]
+    elif param_name == 'kernel_initializer':
+        param_str = filename.split('_')[-2] + '_' + filename.split('_')[-1][:-7]
     else:
-        param_str = f'{int(param)}'
+        raise ValueError
 
     return param_str
 
