@@ -96,9 +96,7 @@ def get_param(path, param_name=None):
     if param_name in ['learning_rate']:
         param = float(filename.split('_')[-1][:-7])
         param_str = f'{param:.1e}'
-    elif param_name == 'alpha':
-        param_str = filename.split('_')[-1][:-7]
-    elif param_name == 'batch_size':
+    elif param_name == ['alpha', 'batch_size', 'input_shape']:
         param_str = filename.split('_')[-1][:-7]
     elif param_name == 'kernel_initializer':
         param_str = filename.split('_')[-2] + '_' + filename.split('_')[-1][:-7]
