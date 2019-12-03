@@ -89,7 +89,10 @@ def plot_metric_paths(metric, paths, x_axis_step=2, scientific=True):
 
 def get_param(path, scientific=True):
     filename = str(path)
-    param = float(filename.split('_')[-1][:-7])
+    try:
+        param = float(filename.split('_')[-1][:-7])
+    except ValueError:
+        return filename.split('_')[-1][:-7]
 
     if scientific:
         param_str = f'{param:.1e}'
