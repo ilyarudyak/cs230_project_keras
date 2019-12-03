@@ -51,11 +51,11 @@ def jaccard_coef_loss(y_true, y_pred):
     return j
 
 
-def save_history(history, trainer, param_name=None):
+def save_history(history, trainer, param_name=None, name_modifier=''):
 
     if param_name:
         param = trainer.params.dict[param_name]
-        filename = trainer.experiment_dir / f'history_{param_name}_{param}.pickle'
+        filename = trainer.experiment_dir / f'history_{param_name+name_modifier}_{param}.pickle'
     else:
         filename = trainer.experiment_dir / 'history.pickle'
     with open(filename, 'wb') as f:

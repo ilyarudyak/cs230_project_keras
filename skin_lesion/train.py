@@ -134,7 +134,7 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='batch_size')
 
-    def tune_leaky_relu(self, alphas=(0, .001, .01, .1, .2, .3)):
+    def tune_leaky_relu(self, alphas=(0, .001, .01, .1, .2, .3), name_modifier=''):
         for alpha in alphas:
             print(f'============== alpha: {alpha} ==============')
             self.params.alpha = alpha
@@ -144,7 +144,7 @@ class Tuner:
                                    is_toy=self.is_toy,
                                    set_seed=self.set_seed)
             history = self.trainer.train()
-            utils.save_history(history, self.trainer, param_name='alpha_50e')
+            utils.save_history(history, self.trainer, param_name='alpha', name_modifier=name_modifier)
 
 
 if __name__ == '__main__':
@@ -159,4 +159,4 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_leaky_relu(alphas=(.001, .3))
+    tuner.tune_leaky_relu(alphas=(.001, .3), name_modifier='_50epochs')
