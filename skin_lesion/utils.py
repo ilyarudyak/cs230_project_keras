@@ -92,7 +92,7 @@ def get_param(path, scientific=True):
     try:
         param = float(filename.split('_')[-1][:-7])
     except ValueError:
-        return filename.split('_')[-1][:-7]
+        return filename.split('_')[-2] + '_' + filename.split('_')[-1][:-7]
 
     if scientific:
         param_str = f'{param:.1e}'
