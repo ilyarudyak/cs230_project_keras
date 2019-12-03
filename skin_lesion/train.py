@@ -134,6 +134,18 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='batch_size')
 
+    def tune_leaky_relu(self, alphas=(.001, .01, .1, .2, .3)):
+        for alpha in alphas:
+            print(f'============== alpha: {alpha} ==============')
+            self.params.alpha = alpha
+            self.trainer = Trainer(params=self.params,
+                                   net_class=self.net_class,
+                                   experiment_dir=self.experiment_dir,
+                                   is_toy=self.is_toy,
+                                   set_seed=self.set_seed)
+            history = self.trainer.train()
+            utils.save_history(history, self.trainer, param_name='alpha')
+
 
 if __name__ == '__main__':
     # trainer = Trainer(experiment_dir=Path('experiments/bigger_leaky_unet'),

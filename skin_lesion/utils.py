@@ -77,22 +77,30 @@ def plot_metric(metric, dir_path):
     plt.title(metric)
 
 
-def plot_metric_paths(metric, paths, m=2):
+def plot_metric_paths(metric, paths, x_axis_step=2, scientific=True):
     for path in paths:
         history = load_history(path)
-        param = get_param(path)
-        n = len(history[metric])
-        plt.plot(list(range(n)), history[metric], label=f'{param:.1e}')
+        plt.plot(history[metric], label=get_param(path, scientific=scientific))
     n = len(load_history(paths[0])[metric])
-    plt.xticks(np.arange(0, n, m))
+    plt.xticks(np.arange(0, n, x_axis_step))
     plt.legend()
     plt.title(metric)
 
 
-def get_param(path):
+def get_param(path, scientific=True):
+    filename = str(path)
+    param = float(filename.split('_')[-1][:-7])
+
+    if scientific:
+        param_str = f'{param:.1e}'
+    else:
+        param_str = f'{int(param)}'
+
+    return param_str
+
+
+def get_param_num(path):
     filename = str(path)
     param = float(filename.split('_')[-1][:-7])
     return param
-
-
 
