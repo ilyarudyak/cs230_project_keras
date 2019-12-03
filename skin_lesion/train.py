@@ -144,7 +144,7 @@ class Tuner:
                                    is_toy=self.is_toy,
                                    set_seed=self.set_seed)
             history = self.trainer.train()
-            utils.save_history(history, self.trainer, param_name='alpha')
+            utils.save_history(history, self.trainer, param_name='alpha_50e')
 
 
 if __name__ == '__main__':
@@ -159,4 +159,4 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_leaky_relu()
+    tuner.tune_leaky_relu(alphas=(.001, .3))
