@@ -158,7 +158,7 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='kernel_initializer')
 
-    def tune_image_shape(self, input_shapes=((224, 224, 3), (256, 256, 3), (512, 512, 3))):
+    def tune_image_shape(self, input_shapes=((512, 512, 3), (256, 256, 3))):
         for input_shape in input_shapes:
             print(f'============== input_shape: {input_shape} ==============')
             self.params.input_shape = input_shape

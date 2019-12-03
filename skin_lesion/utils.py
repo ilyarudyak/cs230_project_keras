@@ -55,6 +55,8 @@ def save_history(history, trainer, param_name=None, name_modifier=''):
 
     if param_name:
         param = trainer.params.dict[param_name]
+        if param_name == 'input_shape':
+            param = param[0]
         filename = trainer.experiment_dir / f'history_{param_name+name_modifier}_{param}.pickle'
     else:
         filename = trainer.experiment_dir / 'history.pickle'
