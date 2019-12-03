@@ -158,11 +158,20 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='kernel_initializer')
 
+    def tune_image_shape(self, input_shapes=((224, 224, 3), (256, 256, 3), (512, 512, 3))):
+        for input_shape in input_shapes:
+            print(f'============== input_shape: {input_shape} ==============')
+            self.params.input_shape = input_shape
+            self.trainer = Trainer(params=self.params,
+                                   net_class=self.net_class,
+                                   experiment_dir=self.experiment_dir,
+                                   is_toy=self.is_toy,
+                                   set_seed=self.set_seed)
+            history = self.trainer.train()
+            utils.save_history(history, self.trainer, param_name='input_shape')
+
 
 if __name__ == '__main__':
-    # trainer = Trainer(experiment_dir=Path('experiments/bigger_leaky_unet'),
-    #                   net_class=BiggerLeakyUnet)
-    # history = trainer.train()
 
     experiment_dir = Path('experiments/bigger_leaky_unet_toy')
     params = utils.Params(experiment_dir / 'params.json')
@@ -171,5 +180,4 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    # tuner.tune_leaky_relu(alphas=(.001, .3), name_modifier='_50epochs')
-    tuner.tune_kernel_initializer()
+    tuner.tune_image_shape()

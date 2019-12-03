@@ -3,7 +3,6 @@
   "batch_size": 2,
   "epochs": 20,
   "input_shape": [256, 256, 3],
-  "target_size": [256, 256],
 
   "alpha": 0.3,
   "kernel_initializer": "he_uniform",

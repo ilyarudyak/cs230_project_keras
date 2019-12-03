@@ -1,5 +1,6 @@
 import tensorflow as tf
 from pathlib import Path
+import utils
 
 
 class SkinLesionDataGen:
@@ -14,7 +15,7 @@ class SkinLesionDataGen:
                  ):
         self.params = params
         self.batch_size = self.params.batch_size
-        self.target_size = self.params.target_size
+        self.target_size = self.params.input_shape[0:2]
         self.seed = self.params.seed
 
         self.image_color_mode = image_color_mode
@@ -98,4 +99,11 @@ class SkinLesionDataGen:
             # mask will contain only 0s and 1s
             mask = mask.round()
             yield img, mask
+
+
+if __name__ == '__main__':
+    data_dir = Path('../experiments/bigger_leaky_unet_toy')
+    params = utils.Params(data_dir / 'params.json')
+    gen = SkinLesionDataGen(params=params)
+    print(gen.target_size)
 
