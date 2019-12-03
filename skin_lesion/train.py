@@ -146,6 +146,18 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='alpha', name_modifier=name_modifier)
 
+    def tune_kernel_initializer(self, kernel_initializers=('glorot_uniform', 'he_uniform', 'he_normal')):
+        for kernel_initializer in kernel_initializers:
+            print(f'============== kernel_initializer: {kernel_initializer} ==============')
+            self.params.kernel_initializer = kernel_initializer
+            self.trainer = Trainer(params=self.params,
+                                   net_class=self.net_class,
+                                   experiment_dir=self.experiment_dir,
+                                   is_toy=self.is_toy,
+                                   set_seed=self.set_seed)
+            history = self.trainer.train()
+            utils.save_history(history, self.trainer, param_name='kernel_initializer')
+
 
 if __name__ == '__main__':
     # trainer = Trainer(experiment_dir=Path('experiments/bigger_leaky_unet'),
@@ -159,4 +171,5 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_leaky_relu(alphas=(.001, .3), name_modifier='_50epochs')
+    # tuner.tune_leaky_relu(alphas=(.001, .3), name_modifier='_50epochs')
+    tuner.tune_kernel_initializer()

@@ -13,6 +13,7 @@ class BiggerLeakyUnet:
         self.params = params
         self.input_shape = params.input_shape
         self.alpha = params.alpha
+        self.kernel_initializer = params.kernel_initializer
         self.set_seed = set_seed
 
         self.model = None
@@ -28,81 +29,81 @@ class BiggerLeakyUnet:
             tf.random.set_seed(self.params.seed)
 
         inputs = tf.keras.layers.Input(self.input_shape)
-        conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same")(inputs)
+        conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(inputs)
         acti1 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv1)
-        conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same")(acti1)
+        conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(acti1)
         acti1 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv1)
         pool1 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(acti1)
 
-        conv2 = tf.keras.layers.Conv2D(64, (3, 3), padding="same")(pool1)
+        conv2 = tf.keras.layers.Conv2D(64, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(pool1)
         acti2 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv2)
-        conv2 = tf.keras.layers.Conv2D(64, (3, 3), padding="same")(acti2)
+        conv2 = tf.keras.layers.Conv2D(64, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(acti2)
         acti2 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv2)
         pool2 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(acti2)
 
-        conv3 = tf.keras.layers.Conv2D(128, (3, 3), padding="same")(pool2)
+        conv3 = tf.keras.layers.Conv2D(128, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(pool2)
         acti3 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv3)
-        conv3 = tf.keras.layers.Conv2D(128, (3, 3), padding="same")(acti3)
+        conv3 = tf.keras.layers.Conv2D(128, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(acti3)
         acti3 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv3)
         pool3 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(acti3)
 
-        conv4 = tf.keras.layers.Conv2D(256, (3, 3), padding="same")(pool3)
+        conv4 = tf.keras.layers.Conv2D(256, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(pool3)
         acti4 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv4)
-        conv4 = tf.keras.layers.Conv2D(256, (3, 3), padding="same")(acti4)
+        conv4 = tf.keras.layers.Conv2D(256, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(acti4)
         acti4 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv4)
         pool4 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(acti4)
 
-        conv5 = tf.keras.layers.Conv2D(512, (3, 3), padding="same")(pool4)
+        conv5 = tf.keras.layers.Conv2D(512, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(pool4)
         acti5 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv5)
-        conv5 = tf.keras.layers.Conv2D(512, (3, 3), padding="same")(acti5)
+        conv5 = tf.keras.layers.Conv2D(512, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(acti5)
         acti5 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv5)
         pool5 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(acti5)
 
-        conv6 = tf.keras.layers.Conv2D(1024, (3, 3), padding="same")(pool5)
+        conv6 = tf.keras.layers.Conv2D(1024, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(pool5)
         acti6 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv6)
-        conv6 = tf.keras.layers.Conv2D(1024, (3, 3), padding="same")(acti6)
+        conv6 = tf.keras.layers.Conv2D(1024, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(acti6)
         acti6 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv6)
         pool6 = tf.keras.layers.MaxPooling2D(pool_size=(2, 2))(acti6)
 
-        conv7 = tf.keras.layers.Conv2D(2048, (3, 3), padding="same")(pool6)
+        conv7 = tf.keras.layers.Conv2D(2048, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(pool6)
         acti7 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv7)
-        conv7 = tf.keras.layers.Conv2D(2048, (3, 3), padding="same")(acti7)
+        conv7 = tf.keras.layers.Conv2D(2048, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(acti7)
         acti7 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(conv7)
 
         right_up6 = tf.keras.layers.concatenate([tf.keras.layers.UpSampling2D(size=(2, 2))(acti7), acti6], axis=3)
-        right_conv6 = tf.keras.layers.Conv2D(512, (3, 3), padding="same")(right_up6)
+        right_conv6 = tf.keras.layers.Conv2D(512, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_up6)
         right_acti6 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv6)
-        right_conv6 = tf.keras.layers.Conv2D(512, (3, 3), padding="same")(right_acti6)
+        right_conv6 = tf.keras.layers.Conv2D(512, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_acti6)
         right_acti6 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv6)
 
         right_up5 = tf.keras.layers.concatenate([tf.keras.layers.UpSampling2D(size=(2, 2))(right_acti6), acti5], axis=3)
-        right_conv5 = tf.keras.layers.Conv2D(512, (3, 3), padding="same")(right_up5)
+        right_conv5 = tf.keras.layers.Conv2D(512, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_up5)
         right_acti5 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv5)
-        right_conv5 = tf.keras.layers.Conv2D(512, (3, 3), padding="same")(right_acti5)
+        right_conv5 = tf.keras.layers.Conv2D(512, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_acti5)
         right_acti5 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv5)
 
         right_up4 = tf.keras.layers.concatenate([tf.keras.layers.UpSampling2D(size=(2, 2))(right_acti5), acti4], axis=3)
-        right_conv4 = tf.keras.layers.Conv2D(256, (3, 3), padding="same")(right_up4)
+        right_conv4 = tf.keras.layers.Conv2D(256, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_up4)
         right_acti4 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv4)
-        right_conv4 = tf.keras.layers.Conv2D(256, (3, 3), padding="same")(right_acti4)
+        right_conv4 = tf.keras.layers.Conv2D(256, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_acti4)
         right_acti4 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv4)
 
         right_up3 = tf.keras.layers.concatenate([tf.keras.layers.UpSampling2D(size=(2, 2))(right_acti4), acti3], axis=3)
-        right_conv3 = tf.keras.layers.Conv2D(128, (3, 3), padding="same")(right_up3)
+        right_conv3 = tf.keras.layers.Conv2D(128, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_up3)
         right_acti3 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv3)
-        right_conv3 = tf.keras.layers.Conv2D(128, (3, 3), padding="same")(right_acti3)
+        right_conv3 = tf.keras.layers.Conv2D(128, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_acti3)
         right_acti3 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv3)
 
         right_up2 = tf.keras.layers.concatenate([tf.keras.layers.UpSampling2D(size=(2, 2))(right_acti3), acti2], axis=3)
-        right_conv2 = tf.keras.layers.Conv2D(64, (3, 3), padding="same")(right_up2)
+        right_conv2 = tf.keras.layers.Conv2D(64, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_up2)
         right_acti2 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv2)
-        right_conv2 = tf.keras.layers.Conv2D(64, (3, 3), padding="same")(right_acti2)
+        right_conv2 = tf.keras.layers.Conv2D(64, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_acti2)
         right_acti2 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv2)
 
         right_up1 = tf.keras.layers.concatenate([tf.keras.layers.UpSampling2D(size=(2, 2))(right_acti2), acti1], axis=3)
-        right_conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same")(right_up1)
+        right_conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_up1)
         right_acti1 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv1)
-        right_conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same")(right_acti1)
+        right_conv1 = tf.keras.layers.Conv2D(32, (3, 3), padding="same", kernel_initializer=self.kernel_initializer)(right_acti1)
         right_acti1 = tf.keras.layers.LeakyReLU(alpha=self.alpha)(right_conv1)
 
         output = tf.keras.layers.Conv2D(1, (1, 1), activation='sigmoid')(right_acti1)
