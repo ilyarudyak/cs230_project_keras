@@ -170,14 +170,30 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='input_shape')
 
+    def tune_model_size(self, model_sizes=('regular', 'big')):
+
+        net_classes = {'regular': FullUnet,
+                       'big': BiggerLeakyUnet}
+
+        for model_size in model_sizes:
+            print(f'============== model_size: {model_size} ==============')
+            self.params.model_size = model_size
+            self.trainer = Trainer(params=self.params,
+                                   net_class=net_classes[model_size],
+                                   experiment_dir=self.experiment_dir,
+                                   is_toy=self.is_toy,
+                                   set_seed=self.set_seed)
+            history = self.trainer.train()
+            utils.save_history(history, self.trainer, param_name='model_size')
+
 
 if __name__ == '__main__':
 
-    experiment_dir = Path('experiments/bigger_leaky_unet_toy')
+    experiment_dir = Path('experiments/model_size_toy')
     params = utils.Params(experiment_dir / 'params.json')
     tuner = Tuner(params=params,
-                  net_class=BiggerLeakyUnet,
+                  net_class=None,
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_image_shape()
+    tuner.tune_model_size()

@@ -1,0 +1,10 @@
+- [1]-[3] pre deep learning approaches to segmentation
+- [4] Ronneberger et al., 2015. U-Net: Convolutional Networks for Biomedical Image Segmentation
+- [5] Ozan et al., 2018. Attention U-Net: Learning Where to Look for the Pancreas
+- [6]-[7] VGG and resnet
+- [8] layer normalization
+- [9]-[10] dataset description
+- [11]-[12] not available 
+- [13] medical
+
+So the only paper to read - attention Unet. It seems some code is also available.
