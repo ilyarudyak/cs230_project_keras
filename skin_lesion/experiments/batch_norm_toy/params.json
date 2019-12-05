@@ -8,6 +8,7 @@
   "kernel_initializer": "he_uniform",
 
   "model_size": "regular",
+  "normalization": "no_batch_norm",
 
   "num_train": 155,
   "num_val": 51,

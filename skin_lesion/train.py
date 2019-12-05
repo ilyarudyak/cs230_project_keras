@@ -4,6 +4,7 @@ import utils
 from data.data_gen import SkinLesionDataGen
 from model.full_unet import FullUnet
 from model.bigger_leaky_unet import BiggerLeakyUnet
+from model.bigger_leaky_bn_unet import BiggerLeakyBNUnet
 
 
 class Trainer:
@@ -186,14 +187,30 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='model_size')
 
+    def tune_batch_norm(self, normalizations=('no-batch-norm', 'batch-norm')):
+
+        net_classes = {'no-batch-norm': BiggerLeakyUnet,
+                       'batch-norm': BiggerLeakyBNUnet}
+
+        for normalization in normalizations:
+            print(f'============== normalization: {normalization} ==============')
+            self.params.normalization = normalization
+            self.trainer = Trainer(params=self.params,
+                                   net_class=net_classes[normalization],
+                                   experiment_dir=self.experiment_dir,
+                                   is_toy=self.is_toy,
+                                   set_seed=self.set_seed)
+            history = self.trainer.train()
+            utils.save_history(history, self.trainer, param_name='normalization')
+
 
 if __name__ == '__main__':
 
-    experiment_dir = Path('experiments/model_size_toy')
+    experiment_dir = Path('experiments/batch_norm_toy')
     params = utils.Params(experiment_dir / 'params.json')
     tuner = Tuner(params=params,
                   net_class=None,
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_model_size()
+    tuner.tune_batch_norm()
