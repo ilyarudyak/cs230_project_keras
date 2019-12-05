@@ -213,4 +213,4 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_lr(rates=(1e-2))
+    tuner.tune_lr(rates=(1e-2,))
