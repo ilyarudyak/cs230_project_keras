@@ -195,6 +195,8 @@ class Tuner:
         for normalization in normalizations:
             print(f'============== normalization: {normalization} ==============')
             self.params.normalization = normalization
+            if normalization == 'batch_norm':
+                self.params.learning_rate = .1
             self.trainer = Trainer(params=self.params,
                                    net_class=net_classes[normalization],
                                    experiment_dir=self.experiment_dir,
@@ -213,4 +215,4 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_lr(rates=(1e-2,))
+    tuner.tune_batch_norm()
