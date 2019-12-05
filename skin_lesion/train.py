@@ -209,8 +209,8 @@ if __name__ == '__main__':
     experiment_dir = Path('experiments/batch_norm_toy')
     params = utils.Params(experiment_dir / 'params.json')
     tuner = Tuner(params=params,
-                  net_class=None,
+                  net_class=BiggerLeakyBNUnet,
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_batch_norm()
+    tuner.tune_lr()

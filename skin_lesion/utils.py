@@ -79,6 +79,13 @@ def plot_metric(metric, dir_path):
     plt.title(metric)
 
 
+def plot_metrics_from_file(metrics, path):
+    history = load_history(path)
+    for metric in metrics:
+        plt.plot(history[metric], label=f'{metric}')
+    plt.legend()
+
+
 def plot_metric_paths(metric, paths, x_axis_step=2, param_name=None):
     for path in paths:
         history = load_history(path)
