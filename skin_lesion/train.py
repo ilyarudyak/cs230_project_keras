@@ -217,4 +217,4 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_batch_norm(('batch-norm',), name_modifier='_50e')
+    tuner.tune_batch_norm(name_modifier='_50e')
