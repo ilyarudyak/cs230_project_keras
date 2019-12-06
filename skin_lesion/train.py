@@ -46,7 +46,14 @@ class Trainer:
         self.val_gen = self.data_gen.get_val_gen()
 
         # optimizer
-        self.optimizer = tf.keras.optimizers.Adam(lr=self.params.learning_rate)
+        if self.params.optimizer == 'adam':
+            self.optimizer = tf.keras.optimizers.Adam(lr=self.params.learning_rate)
+        elif self.params.optimizer == 'sgd':
+            self.optimizer = tf.keras.optimizers.SGD(learning_rate=self.params.learning_rate,
+                                                     momentum=.9,
+                                                     nesterov=True)
+        else:
+            raise ValueError
 
         # metrics and loss
         # self.metrics = ['accuracy', pixel_diff]
@@ -210,11 +217,11 @@ class Tuner:
 
 if __name__ == '__main__':
 
-    experiment_dir = Path('experiments/batch_norm_toy')
+    experiment_dir = Path('experiments/bigger_leaky_unet_sgd_toy')
     params = utils.Params(experiment_dir / 'params.json')
     tuner = Tuner(params=params,
                   net_class=BiggerLeakyBNUnet,
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_batch_norm(name_modifier='_50e')
+    tuner.tune_lr(rates=(1e-1, 1e-2, 1e-3, 1e-4, 1e-5))
