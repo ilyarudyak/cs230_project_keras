@@ -187,7 +187,7 @@ class Tuner:
             history = self.trainer.train()
             utils.save_history(history, self.trainer, param_name='model_size')
 
-    def tune_batch_norm(self, normalizations=('no-batch-norm', 'batch-norm')):
+    def tune_batch_norm(self, normalizations=('no-batch-norm', 'batch-norm'), name_modifier=''):
 
         net_classes = {'no-batch-norm': BiggerLeakyUnet,
                        'batch-norm': BiggerLeakyBNUnet}
@@ -205,7 +205,7 @@ class Tuner:
                                    is_toy=self.is_toy,
                                    set_seed=self.set_seed)
             history = self.trainer.train()
-            utils.save_history(history, self.trainer, param_name='normalization')
+            utils.save_history(history, self.trainer, param_name='normalization', name_modifier=name_modifier)
 
 
 if __name__ == '__main__':
@@ -217,4 +217,4 @@ if __name__ == '__main__':
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_batch_norm(('batch-norm',))
+    tuner.tune_batch_norm(('batch-norm',), name_modifier='_50e')
