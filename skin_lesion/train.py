@@ -5,6 +5,7 @@ from data.data_gen import SkinLesionDataGen
 from model.full_unet import FullUnet
 from model.bigger_leaky_unet import BiggerLeakyUnet
 from model.bigger_leaky_bn_unet import BiggerLeakyBNUnet
+from model.full_unet_vgg import FullUnetVGG
 
 
 class Trainer:
@@ -217,10 +218,10 @@ class Tuner:
 
 if __name__ == '__main__':
 
-    experiment_dir = Path('experiments/bigger_leaky_unet_sgd_toy')
+    experiment_dir = Path('experiments/transf_learn_vgg_toy')
     params = utils.Params(experiment_dir / 'params.json')
     tuner = Tuner(params=params,
-                  net_class=BiggerLeakyBNUnet,
+                  net_class=FullUnetVGG,
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
