@@ -22,6 +22,7 @@ class FullUnet:
     def get_model(self):
         if self.model is None:
             self._build_model()
+
         return self.model
 
     def _build_model(self):

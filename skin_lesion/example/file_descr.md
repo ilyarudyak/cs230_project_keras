@@ -1,0 +1,7 @@
+- `UnetModel.py`: models, generators, metrics (`jaccard_coef`, `jaccard_coef_loss`);
+- `UNet-New.ipynb`: trining of models from the previous file; they train for 100 epochs and then for another 100 epochs; plot for each training and for combined result;
+- `CS230_Project_Test.ipynb`: split data in train, val and test; visualize some data;
+- `ErrorAnalysis.ipynb`: some visualization for testing results (not clear what they're doing);
+- `Transfer Learning.ipynb`, `Transfer Learning - VGG16.ipynb`: model with resnet50 and VGG16 (it's not clear how they do this); it's training and some predictions;
+- `unet/UNet.ipynb`: it looks like this is a previous version of `UNet-New.ipynb` with models defined in the notebook itself; 
+- `Image_Segmentation_AttentionUNet`: separate directory with lots of files - looks like it's prepared by a separate team member - everything is in separate files etc.   
