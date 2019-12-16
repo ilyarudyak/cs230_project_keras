@@ -6,6 +6,7 @@ from model.full_unet import FullUnet
 from model.bigger_leaky_unet import BiggerLeakyUnet
 from model.bigger_leaky_bn_unet import BiggerLeakyBNUnet
 from model.full_unet_vgg import FullUnetVGG
+from model.full_unet_resnet import FullUnetResnet
 
 
 class Trainer:
@@ -218,11 +219,11 @@ class Tuner:
 
 if __name__ == '__main__':
 
-    experiment_dir = Path('experiments/transf_learn_vgg_toy')
+    experiment_dir = Path('experiments/transf_learn_resnet_toy')
     params = utils.Params(experiment_dir / 'params.json')
     tuner = Tuner(params=params,
-                  net_class=FullUnetVGG,
+                  net_class=FullUnetResnet,
                   experiment_dir=experiment_dir,
                   is_toy=True,
                   set_seed=True)
-    tuner.tune_lr(rates=(1e-4, 1e-5, 1e-6))
+    tuner.tune_lr(rates=(1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6))

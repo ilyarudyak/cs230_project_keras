@@ -93,7 +93,7 @@ def conv_block(prevlayer, filters, prefix, strides=(1, 1)):
     if batch_norm:
         conv = BatchNormalization(name=prefix + "_bn")(conv)
     if layer_norm:
-        conv = LayerNormalization()(conv)
+                 conv = LayerNormalization()(conv)
     conv = LeakyReLU(alpha=0.001, name=prefix + "_activation")(conv)
     return conv
 
