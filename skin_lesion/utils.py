@@ -118,3 +118,7 @@ def get_param_num(path):
     param = float(filename.split('_')[-1][:-7])
     return param
 
+
+if __name__ == '__main__':
+    pass
+
