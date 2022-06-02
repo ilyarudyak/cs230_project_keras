@@ -5,7 +5,7 @@ dask==0.14.0
 decorator==4.0.11
 entrypoints==0.2.2
 h5py==2.6.0
-html5lib==0.9999999
+html5lib==0.99999999
 ipykernel==4.5.2
 ipython==5.3.0
 ipython-genutils==0.1.0
